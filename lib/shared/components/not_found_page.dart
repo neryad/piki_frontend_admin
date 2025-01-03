@@ -60,8 +60,8 @@ class NotFoundScreen extends StatelessWidget {
               buttonColor: Colors.black,
               childTextColor: Colors.white,
               onPressed: () {
-                AppNavigator()
-                    .navigateToPage(thePageRouteName: AppRoutes.mainPage);
+                AppNavigator().navigationToReplacementPage(
+                    thePageRouteName: AppRoutes.mainPage);
               },
             ),
           ),
