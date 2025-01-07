@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:piki_admin/main/pages/main_page.dart';
+import 'package:piki_admin/shared/components/not_found_page.dart';
 import 'package:piki_admin/shared/routes/app_navigator.dart';
 import 'package:piki_admin/shared/routes/app_routes.dart';
 import 'package:piki_admin/shared/routes/get_app_route.dart';
@@ -9,9 +10,12 @@ import 'package:piki_admin/auth/pages/login_pages.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
   // await Hive.initFlutter();
   // setEnvironmentConfig();
   setupDioInterceptor();
+
+
   runApp(const AppState());
 }
 
@@ -83,6 +87,7 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
+
   final int _selectedIndex = 0;
 
   final List<String> _pages = [
@@ -93,10 +98,11 @@ class _MainAppState extends State<MainApp> {
     // const SettingsPage(),
   ];
 
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'MotorPaint App',
+      title: 'Piki Creativa - Admin',
       navigatorKey: AppNavigator().navigatorKey,
       scaffoldMessengerKey: AppNavigator().snackbarKey,
       initialRoute: AppRoutes.login,
@@ -109,150 +115,13 @@ class _MainAppState extends State<MainApp> {
             args: settings.arguments,
           );
         }
-        return null;
+
         // Si la ruta no existe, devuelve una pantalla de error o predeterminada
-        // return MaterialPageRoute(
-        //   builder: (_) => const NotFoundScreen(),
-        // );
+        return MaterialPageRoute(
+          builder: (_) => const NotFoundScreen(),
+        );
       },
       home: const MainPage(),
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-// import 'package:piki_admin/dashboard/pages/dashboard_page.dart';
-
-// void main() {
-//   runApp(const MainApp());
-// }
-
-// class MainApp extends StatelessWidget {
-//   const MainApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(home: MainPage());
-//     // return const MaterialApp(
-//     //   home: Scaffold(
-//     //     body: Center(
-//     //       child: Text('Hello World!'),
-//     //     ),
-//     //   ),
-//     // );
-//   }
-// }
-
-// class MainPage extends StatefulWidget {
-//   const MainPage({super.key});
-
-//   @override
-//   _MainPageState createState() => _MainPageState();
-// }
-
-// class _MainPageState extends State<MainPage> {
-//   int _selectedIndex = 0;
-
-//   final List<Widget> _pages = [
-//     const DashboardPage(),
-//     // const UsersPage(),
-//     // const SettingsPage(),
-//   ];
-
-//   void _onItemTapped(int index) {
-//     setState(() {
-//       _selectedIndex = index;
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('Panel Administrativo'),
-//       ),
-//       drawer: Drawer(
-//         child: ListView(
-//           padding: EdgeInsets.zero,
-//           children: <Widget>[
-//             const DrawerHeader(
-//               decoration: BoxDecoration(
-//                 color: Colors.blue,
-//               ),
-//               child: Text(
-//                 'Menú',
-//                 style: TextStyle(
-//                   color: Colors.white,
-//                   fontSize: 24,
-//                 ),
-//               ),
-//             ),
-//             ListTile(
-//               title: const Text('Dashboard'),
-//               onTap: () {
-//                 _onItemTapped(0);
-//                 Navigator.pop(context); // Cierra el menú
-//               },
-//             ),
-//             ListTile(
-//               title: const Text('Usuarios'),
-//               onTap: () {
-//                 _onItemTapped(1);
-//                 Navigator.pop(context); // Cierra el menú
-//               },
-//             ),
-//             ListTile(
-//               title: const Text('Configuración'),
-//               onTap: () {
-//                 _onItemTapped(2);
-//                 Navigator.pop(context); // Cierra el menú
-//               },
-//             ),
-//           ],
-//         ),
-//       ),
-//       body: _pages[_selectedIndex],
-//     );
-//   }
-// }
-
-// // class DashboardPage extends StatelessWidget {
-// //   const DashboardPage({super.key});
-
-// //   @override
-// //   Widget build(BuildContext context) {
-// //     return const Center(
-// //       child: Text('Página de Dashboard'),
-// //     );
-// //   }
-// // }
-
-// // class UsersPage extends StatelessWidget {
-// //   const UsersPage({super.key});
-
-// //   @override
-// //   Widget build(BuildContext context) {
-// //     return const Center(
-// //       child: Text('Página de Usuarios'),
-// //     );
-// //   }
-// // }
-
-// // class SettingsPage extends StatelessWidget {
-// //   const SettingsPage({super.key});
-
-// //   @override
-// //   Widget build(BuildContext context) {
-// //     return const Center(
-// //       child: Text('Página de Configuración'),
-// //     );
-// //   }
-// // }
