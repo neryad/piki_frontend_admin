@@ -1,7 +1,6 @@
+// ignore_for_file: library_private_types_in_public_api
 import 'package:flutter/material.dart';
 import 'package:piki_admin/dashboard/pages/dashboard_page.dart';
-import 'package:piki_admin/shared/routes/app_navigator.dart';
-import 'package:piki_admin/shared/routes/app_routes.dart';
 import 'package:piki_admin/users/pages/user_page.dart';
 
 class MainPage extends StatefulWidget {
@@ -12,18 +11,23 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int _selectedIndex = 0;
-
-  final List<Widget> _pages = [
-    const DashboardPage(),
-    const UserPage()
-    // const UsersPage(),
-    // const SettingsPage(),
+  Widget _selectedPage = const DashboardPage();
+  final routePageList = [
+    {
+      'icon': Icons.dashboard,
+      'title': 'Dashboard',
+      'page': const DashboardPage(),
+    },
+    {
+      'icon': Icons.people,
+      'title': 'Usuarios',
+      'page': const UserPage(),
+    },
   ];
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(dynamic object) {
     setState(() {
-      _selectedIndex = index;
+      _selectedPage = object['page'] as Widget;
     });
   }
 
@@ -31,7 +35,11 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Panel Administrativo'),
+        centerTitle: false,
+        title: const Text(
+          'Piki Creativa - Panel Administrativo',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       drawer: Drawer(
         child: ListView(
@@ -39,7 +47,7 @@ class _MainPageState extends State<MainPage> {
           children: <Widget>[
             const DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.pink,
               ),
               child: Text(
                 'Menú',
@@ -49,33 +57,20 @@ class _MainPageState extends State<MainPage> {
                 ),
               ),
             ),
-            ListTile(
-              title: const Text('Dashboard'),
-              onTap: () {
-                _onItemTapped(0);
-                // AppNavigator()
-                //     .navigateToPage(thePageRouteName: AppRoutes.dashBoard);
-                Navigator.pop(context); // Cierra el menú
-              },
-            ),
-            ListTile(
-              title: const Text('Usuarios'),
-              onTap: () {
-                _onItemTapped(1);
-                Navigator.pop(context); // Cierra el menú
-              },
-            ),
-            ListTile(
-              title: const Text('Configuración'),
-              onTap: () {
-                _onItemTapped(2);
-                Navigator.pop(context); // Cierra el menú
-              },
-            ),
+            ...routePageList.map((route) {
+              return ListTile(
+                leading: Icon(route['icon'] as IconData),
+                title: Text(route['title'] as String),
+                onTap: () {
+                  _onItemTapped(route);
+                  Navigator.pop(context); // Cierra el menú
+                },
+              );
+            }),
           ],
         ),
       ),
-      body: _pages[_selectedIndex],
+      body: _selectedPage,
     );
   }
 }
