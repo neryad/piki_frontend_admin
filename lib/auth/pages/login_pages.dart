@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -132,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
     await secureStorage.delete(key: 'token');
     // Aquí podrías usar un controlador global de navegación o mostrar un diálogo.
     // Por simplicidad, imprimiremos un mensaje.
-    print('El token ha expirado. Por favor, inicia sesión de nuevo.');
+    log('El token ha expirado. Por favor, inicia sesión de nuevo.');
   }
 
   void setupDioInterceptor() {

@@ -15,8 +15,8 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     // authService.validateTokenExpiration();
     // authService.getUser();
-    final token = authService.getToken();
-    print(token);
+    // final token = authService.getToken();
+    // log(token);
     return const Scaffold(
       body: Center(
         child: Text('Dashboard'),

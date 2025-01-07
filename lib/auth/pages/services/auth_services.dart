@@ -7,8 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jwt_decode/jwt_decode.dart';
-import 'package:piki_admin/shared/constants/enviroment.dart';
-import 'package:piki_admin/shared/routes/app_navigator.dart';
+import 'package:piki_admin/shared/constants/environment.dart';
 
 class AuthService {
   final _dio = Dio();
@@ -22,7 +21,7 @@ class AuthService {
         endpoint,
         data: data,
       );
-      print(response);
+      // log(response);
       if (response.statusCode == 200) {
         final token = response.data['loggedUser']['token'];
         await saveToken(token);
@@ -68,7 +67,7 @@ class AuthService {
   //           return const CustomDialog(
   //               title: 'Solicitud enviada',
   //               descriptions:
-  //                   'Se ha enviado un correo electrónico con las proximas instrucciones para restablecer su contraseña.',
+  //                   'Se ha enviado un correo electrónico con las próximas instrucciones para restablecer su contraseña.',
   //               text: 'Cerrar',
   //               icon: Icons.done);
   //         },
@@ -83,7 +82,7 @@ class AuthService {
   //         context: context,
   //         builder: (BuildContext context) {
   //           return CustomDialog(
-  //             title: 'Ocurrío un error',
+  //             title: 'Ocurrió un error',
   //             descriptions: message,
   //             text: 'Cerrar',
   //             icon: Icons.cancel,
@@ -129,7 +128,7 @@ class AuthService {
   //         context: context,
   //         builder: (BuildContext context) {
   //           return CustomDialog(
-  //             title: 'Ocurrío un error',
+  //             title: 'Ocurrió un error',
   //             descriptions: message,
   //             text: 'Cerrar',
   //             icon: Icons.cancel,
