@@ -153,27 +153,52 @@ class AuthService {
     log('Token saved');
   }
 
-  void validateTokenExpiration() async {
+  // void validateTokenExpiration() async {
+  //   final token = await _storage.read(key: 'token');
+  //   try {
+  //     Map<String, dynamic> payload = Jwt.parseJwt(token!);
+  //     int exp = payload['exp'];
+  //     if (exp != null) {
+  //       final expirationDate = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
+  //       final currentDate = DateTime.now();
+  //       if (currentDate.isBefore(expirationDate)) {
+  //         print('Token is valid until $expirationDate');
+  //       } else {
+  //         AppNavigator().navigateToPage(thePageRouteName: 'login');
+  //         clearToken();
+  //         deleteUser();
+  //         print('Token has expired');
+  //       }
+  //     } else {
+  //       print('Token does not have an expiration date');
+  //     }
+  //   } catch (e) {
+  //     print('Invalid token: $e');
+  //   }
+  // }
+
+  Future<bool> validateTokenExpiration() async {
     final token = await _storage.read(key: 'token');
+    if (token == null) {
+      return false;
+    }
     try {
-      Map<String, dynamic> payload = Jwt.parseJwt(token!);
+      Map<String, dynamic> payload = Jwt.parseJwt(token);
       int exp = payload['exp'];
-      if (exp != null) {
-        final expirationDate = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
-        final currentDate = DateTime.now();
-        if (currentDate.isBefore(expirationDate)) {
-          print('Token is valid until $expirationDate');
-        } else {
-          AppNavigator().navigateToPage(thePageRouteName: 'login');
-          clearToken();
-          deleteUser();
-          print('Token has expired');
-        }
+      final expirationDate = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
+      final currentDate = DateTime.now();
+      if (currentDate.isBefore(expirationDate)) {
+        log('Token is valid until $expirationDate');
+        return true;
       } else {
-        print('Token does not have an expiration date');
+        log('Token has expired');
+        await clearToken();
+        await deleteUser();
+        return false;
       }
     } catch (e) {
-      print('Invalid token: $e');
+      log('Invalid token: $e');
+      return false;
     }
   }
 
