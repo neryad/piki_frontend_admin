@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:piki_admin/dashboard/pages/dashboard_page.dart';
-import 'package:piki_admin/shared/routes/app_navigator.dart';
-import 'package:piki_admin/shared/routes/app_routes.dart';
 import 'package:piki_admin/users/pages/user_page.dart';
 
 class MainPage extends StatefulWidget {
