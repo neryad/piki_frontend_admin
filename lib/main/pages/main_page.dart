@@ -1,6 +1,8 @@
 // ignore_for_file: library_private_types_in_public_api
 import 'package:flutter/material.dart';
 import 'package:piki_admin/dashboard/pages/dashboard_page.dart';
+import 'package:piki_admin/shared/routes/app_navigator.dart';
+import 'package:piki_admin/shared/routes/app_routes.dart';
 import 'package:piki_admin/users/pages/user_page.dart';
 
 class MainPage extends StatefulWidget {
@@ -22,6 +24,11 @@ class _MainPageState extends State<MainPage> {
       'icon': Icons.people,
       'title': 'Usuarios',
       'page': const UserPage(),
+    },
+    {
+      'icon': Icons.power_settings_new_outlined,
+      'title': 'Cerrar sesión',
+      'page': 'logout',
     },
   ];
 
@@ -62,6 +69,11 @@ class _MainPageState extends State<MainPage> {
                 leading: Icon(route['icon'] as IconData),
                 title: Text(route['title'] as String),
                 onTap: () {
+                  if (route['page'] == 'logout') {
+                    AppNavigator().navigationToReplacementPage(
+                        thePageRouteName: AppRoutes.login);
+                    return;
+                  }
                   _onItemTapped(route);
                   Navigator.pop(context); // Cierra el menú
                 },
