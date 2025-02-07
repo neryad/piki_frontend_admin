@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:piki_admin/shared/components/reusable_button.dart';
+import 'package:piki_admin/theme/app_theme.dart';
 
 class UserPage extends StatelessWidget {
   const UserPage({super.key});
@@ -6,21 +8,24 @@ class UserPage extends StatelessWidget {
   static List<Map<String, dynamic>> users = [
     {
       'name': 'Sample user',
+      'lastName': 'Sample lastName',
+      'phone': '809-808-0808',
       'email': 'sample@email.com',
       'role': 'Administrador',
-      'phone': '809-808-0808',
     },
     {
       'name': 'Sample user',
+      'lastName': 'Sample lastName',
+      'phone': '809-808-0808',
       'email': 'sample@email.com',
       'role': 'Administrador',
-      'phone': '809-808-0808',
     },
     {
       'name': 'Sample user',
-      'email': 'sample@email.com',
-      'role': 'Usuario',
+      'lastName': 'Sample lastName',
       'phone': '809-808-0808',
+      'email': 'sample@email.com',
+      'role': 'Administrador',
     },
   ];
 
@@ -38,17 +43,12 @@ class UserPage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextButton.icon(
+                  ReusableButton(
+                    childText: 'Nuevo usuario',
                     onPressed: () {},
-                    label: const Text('Nuevo usuario',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold)),
-                    icon: const Icon(Icons.add),
-                    style: ButtonStyle(
-                      backgroundColor:
-                          WidgetStateProperty.all(Colors.pink.shade300),
-                      foregroundColor: WidgetStateProperty.all(Colors.white),
-                    ),
+                    buttonColor: AppTheme.radicalRed,
+                    childTextColor: Colors.white,
+                    iconData: Icons.add,
                   ),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.3,
@@ -70,9 +70,10 @@ class UserPage extends StatelessWidget {
             // Tabla de productos
             Expanded(
               child: DataTable(
-                columnSpacing: MediaQuery.of(context).size.width / 8,
+                columnSpacing: MediaQuery.of(context).size.width / 10,
                 columns: const [
                   DataColumn(label: Text('Nombre', style: textStyle)),
+                  DataColumn(label: Text('Apellido', style: textStyle)),
                   DataColumn(
                       label: Text(
                     'Correo',
@@ -97,6 +98,7 @@ class UserPage extends StatelessWidget {
                 rows: users.map((product) {
                   return DataRow(cells: [
                     DataCell(Text(product['name'])),
+                    DataCell(Text(product['lastName'])),
                     DataCell(Text(product['email'])),
                     DataCell(Text(product['role'])),
                     DataCell(Text(product['phone'])),
@@ -104,10 +106,10 @@ class UserPage extends StatelessWidget {
                       children: [
                         TextButton.icon(
                           label: const Text('Eliminar'),
-                          icon: const Icon(Icons.delete),
+                          icon: const Icon(Icons.delete, color: Colors.white),
                           style: ButtonStyle(
                             backgroundColor:
-                                WidgetStateProperty.all(Colors.red.shade400),
+                                WidgetStateProperty.all(Colors.red),
                             foregroundColor:
                                 WidgetStateProperty.all(Colors.white),
                           ),
@@ -115,15 +117,15 @@ class UserPage extends StatelessWidget {
                             // Acción para eliminar
                           },
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         TextButton.icon(
                           label: const Text('Editar'),
-                          icon: const Icon(Icons.edit),
+                          icon: const Icon(Icons.edit, color: Colors.white),
                           style: ButtonStyle(
                             backgroundColor:
-                                WidgetStateProperty.all(Colors.pink.shade300),
+                                WidgetStateProperty.all(AppTheme.rose),
                             foregroundColor:
                                 WidgetStateProperty.all(Colors.white),
                           ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:piki_admin/auth/pages/services/auth_services.dart';
+import 'package:piki_admin/auth/services/auth_services.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});

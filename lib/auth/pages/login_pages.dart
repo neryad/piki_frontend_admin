@@ -3,10 +3,14 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:jwt_decode/jwt_decode.dart';
-import 'package:piki_admin/auth/pages/services/auth_services.dart';
+import 'package:piki_admin/auth/services/auth_services.dart';
+import 'package:piki_admin/auth/widgets/card_container.dart';
+import 'package:piki_admin/shared/components/reusable_button.dart';
 import 'package:piki_admin/shared/routes/app_navigator.dart';
 import 'package:piki_admin/shared/routes/app_routes.dart';
+import 'package:piki_admin/theme/app_theme.dart';
 
 // Instancia global de Dio y SecureStorage
 final Dio dio = Dio();
@@ -57,66 +61,6 @@ class _LoginPageState extends State<LoginPage> {
         _isLoading = false;
       });
     }
-
-    // try {
-    //   final response = await dio.post(
-    //     'http://localhost:3000/auth/login',
-    //     data: {
-    //       'email': email,
-    //       'password': password,
-    //     },
-    //     options: Options(
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //       },
-    //     ),
-    //   );
-
-    //   if (response.statusCode == 200) {
-    //     final data = response.data;
-
-    //     if (data['loggedUser'] != null) {
-    //       final user = data['loggedUser'];
-    //       final token = user['token'];
-
-    //       await secureStorage.write(key: 'token', value: token);
-
-    //       ScaffoldMessenger.of(context).showSnackBar(
-    //         SnackBar(content: Text('¡Bienvenido, ${user['name']}!')),
-    //       );
-    //       setState(() {
-    //         _isLoading = false;
-    //       });
-    //       AppNavigator().navigateToPage(thePageRouteName: AppRoutes.mainPage);
-    //     } else {
-    //       ScaffoldMessenger.of(context).showSnackBar(
-    //         const SnackBar(
-    //           content: Text('Error inesperado en la respuesta'),
-    //         ),
-    //       );
-    //       setState(() {
-    //         _isLoading = false;
-    //       });
-    //     }
-    //   } else {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       const SnackBar(
-    //         content: Text('Error al iniciar sesión'),
-    //       ),
-    //     );
-    //     setState(() {
-    //       _isLoading = false;
-    //     });
-    //   }
-    // } on DioException catch (e) {
-    //   final errorMessage = e.response?.data['message'] ?? 'Error de red';
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text(errorMessage)),
-    //   );
-    //   setState(() {
-    //     _isLoading = false;
-    //   });
-    // }
   }
 
   bool _isTokenExpired(String token) {
@@ -172,51 +116,63 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Container(
-              constraints: const BoxConstraints(maxWidth: 400),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Iniciar Sesión',
-                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 24),
-                  TextField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(
-                      labelText: 'Correo Electrónico',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _passwordController,
-                    decoration: const InputDecoration(
-                      labelText: 'Contraseña',
-                      border: OutlineInputBorder(),
-                    ),
-                    obscureText: true,
-                  ),
-                  const SizedBox(height: 24),
-                  _isLoading
-                      ? const CircularProgressIndicator()
-                      : ElevatedButton(
-                          onPressed: _handleLogin,
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(double.infinity, 48),
-                          ),
-                          child: const Text('Iniciar Sesión'),
+      body: Stack(
+        children: [
+          SvgPicture.asset(
+            'assets/rose-petals.svg',
+            fit: BoxFit.cover,
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+          ),
+          Center(
+            child: SingleChildScrollView(
+              child: CardContainer(
+                child: SizedBox(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Piki Creativa - Admin',
+                        style: TextStyle(
+                            fontSize: 52,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'GoldenChesse'),
+                      ),
+                      const SizedBox(height: 24),
+                      TextField(
+                        controller: _emailController,
+                        decoration: const InputDecoration(
+                          labelText: 'Correo Electrónico',
+                          border: OutlineInputBorder(),
                         ),
-                ],
+                      ),
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: _passwordController,
+                        decoration: const InputDecoration(
+                          labelText: 'Contraseña',
+                          border: OutlineInputBorder(),
+                        ),
+                        obscureText: true,
+                      ),
+                      const SizedBox(height: 24),
+                      _isLoading
+                          ? const CircularProgressIndicator()
+                          : ReusableButton(
+                              childText: 'Iniciar Sesión',
+                              onPressed: _handleLogin,
+                              buttonColor: AppTheme.primary,
+                              iconData: Icons.login,
+                              childTextColor: Colors.white,
+                              customHeight: 60,
+                            ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
