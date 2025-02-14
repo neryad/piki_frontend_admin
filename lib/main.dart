@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:piki_admin/main/pages/main_page.dart';
+import 'package:piki_admin/auth/pages/check_auth_screen.dart';
 import 'package:piki_admin/shared/components/not_found_page.dart';
 import 'package:piki_admin/shared/routes/app_navigator.dart';
 import 'package:piki_admin/shared/routes/app_routes.dart';
@@ -35,7 +35,7 @@ class _MainAppState extends State<MainApp> {
       title: 'Piki Creativa - Admin',
       navigatorKey: AppNavigator().navigatorKey,
       scaffoldMessengerKey: AppNavigator().snackbarKey,
-      initialRoute: AppRoutes.login,
+      initialRoute: AppRoutes.checkAuth,
       theme: AppTheme.lightTheme,
       onGenerateRoute: (RouteSettings settings) {
         final pageContentBuilder = AppRoutes.routes[settings.name];
@@ -52,7 +52,7 @@ class _MainAppState extends State<MainApp> {
           builder: (_) => const NotFoundScreen(),
         );
       },
-      home: const MainPage(),
+      home: const CheckAuthScreen(),
     );
   }
 }

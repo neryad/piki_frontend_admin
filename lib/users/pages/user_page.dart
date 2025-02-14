@@ -1,147 +1,215 @@
 import 'package:flutter/material.dart';
 import 'package:piki_admin/shared/components/reusable_button.dart';
+import 'package:piki_admin/shared/functions/table_filter.dart';
+import 'package:piki_admin/shared/widgets/custom_dialog.dart';
+import 'package:piki_admin/shared/widgets/custom_input_field.dart';
 import 'package:piki_admin/theme/app_theme.dart';
+import 'package:piki_admin/shared/widgets/custom_data_table.dart';
+import 'package:piki_admin/shared/widgets/action_search_bar.dart';
+import 'package:piki_admin/users/services/users_service.dart';
 
-class UserPage extends StatelessWidget {
+class UserPage extends StatefulWidget {
   const UserPage({super.key});
 
-  static List<Map<String, dynamic>> users = [
-    {
-      'name': 'Sample user',
-      'lastName': 'Sample lastName',
-      'phone': '809-808-0808',
-      'email': 'sample@email.com',
-      'role': 'Administrador',
-    },
-    {
-      'name': 'Sample user',
-      'lastName': 'Sample lastName',
-      'phone': '809-808-0808',
-      'email': 'sample@email.com',
-      'role': 'Administrador',
-    },
-    {
-      'name': 'Sample user',
-      'lastName': 'Sample lastName',
-      'phone': '809-808-0808',
-      'email': 'sample@email.com',
-      'role': 'Administrador',
-    },
-  ];
+  @override
+  State<UserPage> createState() => _UserPageState();
+}
+
+class _UserPageState extends State<UserPage> {
+  final UsersService _usersService = UsersService();
+  List<Map<String, dynamic>> filteredUsers = [];
+  bool isLoading = true;
+  String? error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsers();
+  }
+
+  Future<void> _loadUsers() async {
+    try {
+      setState(() {
+        isLoading = true;
+        error = null;
+      });
+
+      final users = await _usersService.getUsers();
+      setState(() {
+        filteredUsers = users.map((user) => user.toMap()).toList();
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        error = e.toString();
+        isLoading = false;
+      });
+    }
+  }
+
+  void _filterUsers(String query) {
+    final allUsers = filteredUsers;
+    setState(() {
+      filteredUsers = filterItems(
+        allUsers,
+        query,
+        ['name', 'lastName', 'email', 'phone'],
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     const textStyle = TextStyle(fontWeight: FontWeight.bold);
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Barra de búsqueda
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 115),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ReusableButton(
-                    childText: 'Nuevo usuario',
-                    onPressed: () {},
-                    buttonColor: AppTheme.radicalRed,
-                    childTextColor: Colors.white,
-                    iconData: Icons.add,
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.3,
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Buscar',
-                        prefixIcon: const Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            ActionSearchBar(
+              actionButtonText: 'Nuevo usuario',
+              onActionPressed: () => _createUserDialog(context),
+              actionButtonColor: AppTheme.radicalRed,
+              actionIcon: Icons.add,
+              onSearch: _filterUsers,
             ),
-
             const SizedBox(height: 16),
-            // Tabla de productos
-            Expanded(
-              child: DataTable(
-                columnSpacing: MediaQuery.of(context).size.width / 10,
-                columns: const [
-                  DataColumn(label: Text('Nombre', style: textStyle)),
-                  DataColumn(label: Text('Apellido', style: textStyle)),
-                  DataColumn(
-                      label: Text(
+            if (isLoading)
+              const CircularProgressIndicator()
+            else if (error != null)
+              Text('Error: $error')
+            else
+              Expanded(
+                child: CustomDataTable(
+                  columns: const [
+                    'Nombre',
+                    'Apellido',
                     'Correo',
-                    style: textStyle,
-                  )),
-                  DataColumn(
-                      label: Text(
                     'Rol',
-                    style: textStyle,
-                  )),
-                  DataColumn(
-                      label: Text(
                     'Teléfono',
-                    style: textStyle,
-                  )),
-                  DataColumn(
-                      label: Text(
-                    'Opciones',
-                    style: textStyle,
-                  )),
-                ],
-                rows: users.map((product) {
-                  return DataRow(cells: [
-                    DataCell(Text(product['name'])),
-                    DataCell(Text(product['lastName'])),
-                    DataCell(Text(product['email'])),
-                    DataCell(Text(product['role'])),
-                    DataCell(Text(product['phone'])),
-                    DataCell(Row(
-                      children: [
-                        TextButton.icon(
-                          label: const Text('Eliminar'),
-                          icon: const Icon(Icons.delete, color: Colors.white),
-                          style: ButtonStyle(
-                            backgroundColor:
-                                WidgetStateProperty.all(Colors.red),
-                            foregroundColor:
-                                WidgetStateProperty.all(Colors.white),
-                          ),
-                          onPressed: () {
-                            // Acción para eliminar
-                          },
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        TextButton.icon(
-                          label: const Text('Editar'),
-                          icon: const Icon(Icons.edit, color: Colors.white),
-                          style: ButtonStyle(
-                            backgroundColor:
-                                WidgetStateProperty.all(AppTheme.rose),
-                            foregroundColor:
-                                WidgetStateProperty.all(Colors.white),
-                          ),
-                          onPressed: () {
-                            // Acción para eliminar
-                          },
-                        ),
-                      ],
-                    )),
-                  ]);
-                }).toList(),
+                    'Opciones'
+                  ],
+                  displayFields: const [
+                    'name',
+                    'lastName',
+                    'email',
+                    'role',
+                    'phone'
+                  ],
+                  rows: filteredUsers,
+                  headerStyle: textStyle,
+                  actionsBuilder: (user) => Row(
+                    children: [
+                      ReusableButton(
+                        childText: 'Eliminar',
+                        onPressed: () => _deleteUserDialog(context),
+                        buttonColor: Colors.red,
+                        childTextColor: Colors.white,
+                        iconData: Icons.delete,
+                      ),
+                      const SizedBox(width: 10),
+                      ReusableButton(
+                        childText: 'Editar',
+                        onPressed: () => _createUserDialog(context),
+                        buttonColor: AppTheme.rose,
+                        childTextColor: Colors.white,
+                        iconData: Icons.edit,
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _createUserDialog(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialog(
+          title: 'Crear usuario',
+          formFields: [
+            const CustomInputField(
+              label: 'Nombre',
+              placeHolder: 'Ingrese el nombre del usuario',
+              suffixIcon: Icons.person,
+              formProperty: 'name',
+              maxLength: 30,
+              fromValues: {},
+            ),
+            const CustomInputField(
+              label: 'Apellido',
+              placeHolder: 'Ingrese el apellido del usuario',
+              suffixIcon: Icons.person,
+              formProperty: 'lastName',
+              maxLength: 30,
+              fromValues: {},
+            ),
+            const CustomInputField(
+              label: 'Correo',
+              placeHolder: 'Ingrese el correo del usuario',
+              suffixIcon: Icons.email,
+              formProperty: 'email',
+              maxLength: 30,
+              fromValues: {},
+            ),
+            const CustomInputField(
+              label: 'Teléfono',
+              placeHolder: 'Ingrese el teléfono del usuario',
+              suffixIcon: Icons.phone,
+              formProperty: 'phone',
+              maxLength: 10,
+              fromValues: {},
+            ),
+            const CustomInputField(
+              label: 'Contraseña',
+              placeHolder: 'Ingrese la contraseña del usuario',
+              suffixIcon: Icons.password,
+              formProperty: 'password',
+              fromValues: {},
+            ),
+            const SizedBox(height: 10),
+            DropdownButtonFormField<String>(
+              decoration: InputDecoration(
+                labelText: 'Rol',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+              items: ['Administrador', 'Usuario'].map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (String? value) {},
+            ),
+          ],
+          onCancel: () => Navigator.of(context).pop(),
+          onConfirm: () => Navigator.of(context).pop(),
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteUserDialog(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialog(
+          title: 'Eliminar usuario',
+          dialogSize: 0.4,
+          formFields: const [
+            Text('¿Estás seguro de querer eliminar este usuario?'),
+          ],
+          onCancel: () => Navigator.of(context).pop(),
+          onConfirm: () => Navigator.of(context).pop(),
+        );
+      },
     );
   }
 }
