@@ -215,7 +215,7 @@ class _RolesPagesState extends State<RolesPages> {
                 suffixIcon: Icons.person,
                 formProperty: 'name',
                 maxLength: 30,
-                initialValue: formValues['name'],
+                initialValue: roleData['name'],
                 fromValues: formValues,
                 customValidation: (value) {
                   if (value == null || value.isEmpty) {
