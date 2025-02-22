@@ -13,6 +13,7 @@ class CustomInputField extends StatelessWidget {
   final bool isPassword;
   final String formProperty;
   final String? Function(String?)? customValidation;
+  final String? Function(String?)? customOnChanged;
   final Map<String, dynamic> fromValues;
   const CustomInputField({
     super.key,
@@ -26,6 +27,7 @@ class CustomInputField extends StatelessWidget {
     required this.formProperty,
     required this.fromValues,
     this.customValidation,
+    this.customOnChanged,
     this.maxLength,
     this.controller,
   });
@@ -41,6 +43,9 @@ class CustomInputField extends StatelessWidget {
       obscureText: isPassword,
       onChanged: (value) {
         fromValues[formProperty] = value;
+        if (customOnChanged != null) {
+          customOnChanged!(value);
+        }
       },
       validator: customValidation ?? customValidation,
       autovalidateMode: AutovalidateMode.onUserInteraction,

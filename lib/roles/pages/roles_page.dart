@@ -125,21 +125,38 @@ class _RolesPagesState extends State<RolesPages> {
                 formProperty: 'name',
                 maxLength: 30,
                 fromValues: formValues,
-                // onchange: (value) => print(value),
+                customValidation: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese un nombre';
+                  }
+                  return null;
+                },
+                customOnChanged: (value) {
+                  setState(() {
+                    formValues['name'] = value;
+                    print(formValues['name']);
+                  });
+                  return null;
+                },
               )
             ],
             onCancel: () => Navigator.of(context).pop(),
             onConfirm: () async {
-              if (_formKey.currentState!.validate()) {
-                _formKey.currentState!.save();
-                try {
-                  await _roleService.createRole(formValues['name']);
+              // if (_formKey.currentState!.validate()) {
+              //   _formKey.currentState!.save();
+              try {
+                final roleName = formValues['name'];
+                if (roleName != null && roleName.isNotEmpty) {
+                  await _roleService.createRole(roleName);
                   Navigator.of(context).pop();
                   _loadRoles();
-                } catch (e) {
-                  print(e);
+                } else {
+                  print('El nombre del rol no puede estar vacío');
                 }
+              } catch (e) {
+                print(e);
               }
+              // }
             },
           );
         });
