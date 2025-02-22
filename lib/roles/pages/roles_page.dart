@@ -91,7 +91,9 @@ class _RolesPagesState extends State<RolesPages> {
                             children: [
                               ReusableButton(
                                 childText: 'Eliminar',
-                                onPressed: () => _deleteRoleDialog(context),
+                                onPressed: () async {
+                                  await _deleteRoleDialog(context, role['id']);
+                                },
                                 buttonColor: Colors.red,
                                 childTextColor: Colors.white,
                                 iconData: Icons.delete,
@@ -99,7 +101,14 @@ class _RolesPagesState extends State<RolesPages> {
                               const SizedBox(width: 10),
                               ReusableButton(
                                 childText: 'Editar',
-                                onPressed: () => _editRoleDialog(context),
+                                onPressed: () async {
+                                  //TODO: Implementar la edición de roles en el back
+                                  // Roles roleToUpdate =
+                                  //     await _roleService.getRole(role['id']);
+
+                                  // print(roleToUpdate);
+                                  _editRoleDialog(context);
+                                },
                                 buttonColor: AppTheme.rose,
                                 childTextColor: Colors.white,
                               )
@@ -111,7 +120,7 @@ class _RolesPagesState extends State<RolesPages> {
     );
   }
 
-  Future<void> _createRoleDialog(BuildContext context) {
+  Future<void> _createRoleDialog(BuildContext context) async {
     return showDialog<void>(
         context: context,
         builder: (BuildContext context) {
@@ -162,15 +171,28 @@ class _RolesPagesState extends State<RolesPages> {
         });
   }
 
-  Widget _deleteRoleDialog(BuildContext context) {
-    return CustomDialog(
-      title: 'Eliminar rol',
-      formFields: const [
-        Text('¿Estás seguro de querer eliminar este rol?'),
-      ],
-      onCancel: () {},
-      onConfirm: () {},
-    );
+  Future<void> _deleteRoleDialog(BuildContext context, int id) {
+    return showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomDialog(
+            title: 'Eliminar rol',
+            formFields: const [
+              Text('¿Está seguro que desea eliminar este rol?')
+            ],
+            onCancel: () => Navigator.of(context).pop(),
+            onConfirm: () async {
+              try {
+                await _roleService.deleteRole(id);
+                Navigator.of(context).pop();
+                // setState(() {});
+                _loadRoles();
+              } catch (e) {
+                print(e);
+              }
+            },
+          );
+        });
   }
 
   Widget _editRoleDialog(

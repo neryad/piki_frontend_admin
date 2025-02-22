@@ -31,4 +31,42 @@ class RoleService {
       rethrow;
     }
   }
+
+  Future<void> updateRole(String id, String role) async {
+    var data = {'name': role};
+    try {
+      final loggedUser = await AuthService().getUser();
+      final token = loggedUser?['token'];
+      _http.setAuthToken(token);
+      await _http.put('/roles/$id', data: data);
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
+
+  Future<void> deleteRole(int id) async {
+    try {
+      final loggedUser = await AuthService().getUser();
+      final token = loggedUser?['token'];
+      _http.setAuthToken(token);
+      await _http.delete('/roles/$id');
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
+
+  Future<Roles> getRole(int id) async {
+    try {
+      final loggedUser = await AuthService().getUser();
+      final token = loggedUser?['token'];
+      _http.setAuthToken(token);
+      final response = await _http.get('/roles/$id');
+      return Roles.fromJson(response.data);
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
 }
