@@ -107,7 +107,7 @@ class _RolesPagesState extends State<RolesPages> {
                                   //     await _roleService.getRole(role['id']);
 
                                   // print(roleToUpdate);
-                                  _editRoleDialog(context);
+                                  _editRoleDialog(context, role);
                                 },
                                 buttonColor: AppTheme.rose,
                                 childTextColor: Colors.white,
@@ -195,16 +195,58 @@ class _RolesPagesState extends State<RolesPages> {
         });
   }
 
-  Widget _editRoleDialog(
+  Future<void> _editRoleDialog(
     BuildContext context,
+    Map<String, dynamic> roleData,
   ) {
-    return CustomDialog(
-      title: 'Editar rol',
-      formFields: const [
-        Text('Editar rol'),
-      ],
-      onCancel: () {},
-      onConfirm: () {},
-    );
+    setState(() {
+      formValues = roleData;
+    });
+
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomDialog(
+            title: 'Editar rol',
+            formFields: [
+              CustomInputField(
+                label: 'Nombre',
+                placeHolder: 'Ingrese el nombre del rol',
+                suffixIcon: Icons.person,
+                formProperty: 'name',
+                maxLength: 30,
+                initialValue: formValues['name'],
+                fromValues: formValues,
+                customValidation: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese un nombre';
+                  }
+                  return null;
+                },
+                customOnChanged: (value) {
+                  setState(() {
+                    formValues['name'] = value;
+                  });
+                  return null;
+                },
+              )
+            ],
+            onCancel: () => Navigator.of(context).pop(),
+            onConfirm: () async {
+              try {
+                final roleName = formValues['name'];
+                if (roleName != null && roleName.isNotEmpty) {
+                  await _roleService.updateRole(roleData['id'], roleName);
+                  Navigator.of(context).pop();
+                  _loadRoles();
+                } else {
+                  print('El nombre del rol no puede estar vacío');
+                }
+              } catch (e) {
+                print(e);
+              }
+            },
+          );
+        });
   }
 }

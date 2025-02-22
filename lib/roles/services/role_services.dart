@@ -32,7 +32,7 @@ class RoleService {
     }
   }
 
-  Future<void> updateRole(String id, String role) async {
+  Future<void> updateRole(int id, String role) async {
     var data = {'name': role};
     try {
       final loggedUser = await AuthService().getUser();

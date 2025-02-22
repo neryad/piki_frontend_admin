@@ -15,6 +15,7 @@ class CustomInputField extends StatelessWidget {
   final String? Function(String?)? customValidation;
   final String? Function(String?)? customOnChanged;
   final Map<String, dynamic> fromValues;
+  final String? initialValue;
   const CustomInputField({
     super.key,
     this.placeHolder,
@@ -28,6 +29,7 @@ class CustomInputField extends StatelessWidget {
     required this.fromValues,
     this.customValidation,
     this.customOnChanged,
+    this.initialValue,
     this.maxLength,
     this.controller,
   });
