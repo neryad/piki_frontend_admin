@@ -1,31 +1,33 @@
 import 'package:piki_admin/auth/services/auth_services.dart';
+import 'package:piki_admin/roles/models/role_model.dart';
 import 'package:piki_admin/shared/services/http_service.dart';
-import '../models/user_model.dart';
 
-class UsersService {
+class RoleService {
   final HttpService _http = HttpService();
 
-  Future<List<User>> getUsers() async {
+  Future<List<Roles>> getRoles() async {
     try {
       final loggedUser = await AuthService().getUser();
       final token = loggedUser?['token'];
       _http.setAuthToken(token);
-      final response = await _http.get('/users/allUsers');
-      final List<dynamic> usersJson = response.data;
-      return usersJson.map((json) => User.fromJson(json)).toList();
+      final response = await _http.get('/roles');
+      final List<dynamic> rolesJson = response.data;
+      return rolesJson.map((json) => Roles.fromJson(json)).toList();
     } catch (e) {
+      print(e);
       rethrow;
     }
   }
 
-  Future<User> getUserById(int id) async {
+  Future<void> createRole(String role) async {
+    var data = {'name': role};
     try {
       final loggedUser = await AuthService().getUser();
       final token = loggedUser?['token'];
       _http.setAuthToken(token);
-      final response = await _http.get('/users/$id');
-      return User.fromJson(response.data);
+      await _http.post('/roles', data: data);
     } catch (e) {
+      print(e);
       rethrow;
     }
   }

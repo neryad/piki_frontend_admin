@@ -6,6 +6,7 @@ import 'package:piki_admin/shared/widgets/custom_input_field.dart';
 import 'package:piki_admin/theme/app_theme.dart';
 import 'package:piki_admin/shared/widgets/custom_data_table.dart';
 import 'package:piki_admin/shared/widgets/action_search_bar.dart';
+import 'package:piki_admin/users/models/user_model.dart';
 import 'package:piki_admin/users/services/users_service.dart';
 
 class UserPage extends StatefulWidget {
@@ -39,6 +40,7 @@ class _UserPageState extends State<UserPage> {
         filteredUsers = users.map((user) => user.toMap()).toList();
         isLoading = false;
       });
+      print('filteredUsers: $filteredUsers');
     } catch (e) {
       setState(() {
         error = e.toString();
@@ -111,7 +113,12 @@ class _UserPageState extends State<UserPage> {
                       const SizedBox(width: 10),
                       ReusableButton(
                         childText: 'Editar',
-                        onPressed: () => _createUserDialog(context),
+                        onPressed: () async {
+                          //  print(user['id']);
+                          final userData = await _usersService.getUserById(3);
+                          print(userData);
+                          return;
+                        },
                         buttonColor: AppTheme.rose,
                         childTextColor: Colors.white,
                         iconData: Icons.edit,
@@ -123,6 +130,79 @@ class _UserPageState extends State<UserPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _editUserDialog(BuildContext context, String id) async {
+    print(id);
+    return;
+    final User user = await _usersService.getUserById(int.parse(id));
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialog(
+          title: 'Editar usuario',
+          formFields: [
+            CustomInputField(
+              label: 'Nombre',
+              placeHolder: 'Ingrese el nombre del usuario',
+              suffixIcon: Icons.person,
+              formProperty: 'name',
+              maxLength: 30,
+              fromValues: {'name': user.name},
+            ),
+            CustomInputField(
+              label: 'Apellido',
+              placeHolder: 'Ingrese el apellido del usuario',
+              suffixIcon: Icons.person,
+              formProperty: 'lastName',
+              maxLength: 30,
+              fromValues: {'lastName': user.lastName},
+            ),
+            CustomInputField(
+              label: 'Correo',
+              placeHolder: 'Ingrese el correo del usuario',
+              suffixIcon: Icons.email,
+              formProperty: 'email',
+              maxLength: 30,
+              fromValues: {'email': user.email},
+            ),
+            CustomInputField(
+              label: 'Teléfono',
+              placeHolder: 'Ingrese el teléfono del usuario',
+              suffixIcon: Icons.phone,
+              formProperty: 'phone',
+              maxLength: 10,
+              fromValues: {'phone': user.phone},
+            ),
+            // CustomInputField(
+            //   label: 'Contraseña',
+            //   placeHolder: 'Ingrese la contraseña del usuario',
+            //   suffixIcon: Icons.password,
+            //   formProperty: 'password',
+            //   fromValues: {'password': user.},
+            // ),
+            const SizedBox(height: 10),
+            DropdownButtonFormField<String>(
+              decoration: InputDecoration(
+                labelText: 'Rol',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+              items: ['Administrador', 'Usuario'].map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (String? value) {},
+            ),
+          ],
+          onCancel: () => Navigator.of(context).pop(),
+          onConfirm: () => Navigator.of(context).pop(),
+        );
+      },
     );
   }
 
