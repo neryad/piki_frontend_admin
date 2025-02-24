@@ -27,4 +27,3 @@ flutter:
     - family: GoldenChesse
       fonts:
         - asset: assets/fonts/golden_chesse.otf
-

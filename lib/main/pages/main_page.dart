@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:piki_admin/auth/services/auth_services.dart';
 import 'package:piki_admin/dashboard/pages/dashboard_page.dart';
+import 'package:piki_admin/roles/pages/roles_page.dart';
 import 'package:piki_admin/shared/routes/app_navigator.dart';
 import 'package:piki_admin/shared/routes/app_routes.dart';
 import 'package:piki_admin/theme/app_theme.dart';
@@ -26,6 +27,11 @@ class _MainPageState extends State<MainPage> {
       'icon': Icons.people,
       'title': 'Usuarios',
       'page': const UserPage(),
+    },
+    {
+      'icon': Icons.tag,
+      'title': 'Roles',
+      'page': const RolesPages(),
     },
     {
       'icon': Icons.power_settings_new_outlined,
