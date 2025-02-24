@@ -1,6 +1,11 @@
 // ignore_for_file: library_private_types_in_public_api
 import 'package:flutter/material.dart';
+import 'package:piki_admin/auth/services/auth_services.dart';
 import 'package:piki_admin/dashboard/pages/dashboard_page.dart';
+import 'package:piki_admin/roles/pages/roles_page.dart';
+import 'package:piki_admin/shared/routes/app_navigator.dart';
+import 'package:piki_admin/shared/routes/app_routes.dart';
+import 'package:piki_admin/theme/app_theme.dart';
 import 'package:piki_admin/users/pages/user_page.dart';
 
 class MainPage extends StatefulWidget {
@@ -23,6 +28,16 @@ class _MainPageState extends State<MainPage> {
       'title': 'Usuarios',
       'page': const UserPage(),
     },
+    {
+      'icon': Icons.tag,
+      'title': 'Roles',
+      'page': const RolesPages(),
+    },
+    {
+      'icon': Icons.power_settings_new_outlined,
+      'title': 'Cerrar sesión',
+      'page': 'logout',
+    },
   ];
 
   void _onItemTapped(dynamic object) {
@@ -38,7 +53,7 @@ class _MainPageState extends State<MainPage> {
         centerTitle: false,
         title: const Text(
           'Piki Creativa - Panel Administrativo',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 30),
         ),
       ),
       drawer: Drawer(
@@ -47,7 +62,7 @@ class _MainPageState extends State<MainPage> {
           children: <Widget>[
             const DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.pink,
+                color: AppTheme.pinkSalmon,
               ),
               child: Text(
                 'Menú',
@@ -62,6 +77,13 @@ class _MainPageState extends State<MainPage> {
                 leading: Icon(route['icon'] as IconData),
                 title: Text(route['title'] as String),
                 onTap: () {
+                  if (route['page'] == 'logout') {
+                    AuthService().logout();
+                    AppNavigator().navigationToReplacementPage(
+                        thePageRouteName: AppRoutes.login);
+                    return;
+                  }
+
                   _onItemTapped(route);
                   Navigator.pop(context); // Cierra el menú
                 },
