@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:piki_admin/roles/models/role_model.dart';
 import 'package:piki_admin/roles/services/role_services.dart';
@@ -8,7 +9,7 @@ import 'package:piki_admin/shared/widgets/custom_input_field.dart';
 import 'package:piki_admin/theme/app_theme.dart';
 import 'package:piki_admin/shared/widgets/custom_data_table.dart';
 import 'package:piki_admin/shared/widgets/action_search_bar.dart';
-import 'package:piki_admin/users/models/user_model.dart';
+// import 'package:piki_admin/users/models/user_model.dart';
 import 'package:piki_admin/users/services/users_service.dart';
 
 class UserPage extends StatefulWidget {
@@ -25,7 +26,7 @@ class _UserPageState extends State<UserPage> {
   List<Roles> roles = [];
   bool isLoading = true;
   String? error;
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Map<String, dynamic> formValues = {};
 
   @override
@@ -47,7 +48,7 @@ class _UserPageState extends State<UserPage> {
         filteredUsers = users.map((user) => user.toMap()).toList();
         isLoading = false;
       });
-      print('filteredUsers: $filteredUsers');
+      log('filteredUsers: $filteredUsers');
     } catch (e) {
       setState(() {
         error = e.toString();
@@ -59,9 +60,9 @@ class _UserPageState extends State<UserPage> {
   Future<void> _loadRoles() async {
     try {
       roles = await _rolService.getRoles();
-      print(roles);
+      log(roles.toString());
     } catch (e) {
-      print(e);
+      log(e.toString());
     }
   }
 
@@ -283,14 +284,12 @@ class _UserPageState extends State<UserPage> {
           ],
           onCancel: () => Navigator.of(context).pop(),
           onConfirm: () async {
-            print('formValues: $formValues');
-            return;
             try {
               await _usersService.updateUser(formValues);
               Navigator.of(context).pop();
               _loadUsers();
             } catch (e) {
-              print(e);
+              log(e.toString());
             }
           },
         );
@@ -427,7 +426,7 @@ class _UserPageState extends State<UserPage> {
               Navigator.of(context).pop();
               _loadUsers();
             } catch (e) {
-              print(e);
+              log(e.toString());
             }
           },
         );
@@ -453,7 +452,7 @@ class _UserPageState extends State<UserPage> {
                 Navigator.of(context).pop();
                 _loadUsers();
               } catch (e) {
-                print(e);
+                log(e.toString());
               }
             });
       },
