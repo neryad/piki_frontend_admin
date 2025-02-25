@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:piki_admin/auth/services/auth_services.dart';
 import 'package:piki_admin/dashboard/pages/dashboard_page.dart';
+import 'package:piki_admin/materials/pages/material_page.dart';
 import 'package:piki_admin/roles/pages/roles_page.dart';
 import 'package:piki_admin/shared/routes/app_navigator.dart';
 import 'package:piki_admin/shared/routes/app_routes.dart';
@@ -22,6 +23,11 @@ class _MainPageState extends State<MainPage> {
       'icon': Icons.dashboard,
       'title': 'Dashboard',
       'page': const DashboardPage(),
+    },
+    {
+      'icon': Icons.offline_pin_rounded,
+      'title': 'Materiales',
+      'page': const MaterialsPage(),
     },
     {
       'icon': Icons.people,

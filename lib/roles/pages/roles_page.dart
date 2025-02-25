@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:piki_admin/roles/models/role_model.dart';
+// import 'package:piki_admin/roles/models/role_model.dart';
 import 'package:piki_admin/roles/services/role_services.dart';
 import 'package:piki_admin/shared/components/reusable_button.dart';
 import 'package:piki_admin/shared/functions/table_filter.dart';
@@ -19,7 +19,7 @@ class RolesPages extends StatefulWidget {
 class _RolesPagesState extends State<RolesPages> {
   final RoleService _roleService = RoleService();
   List<Map<String, dynamic>> filteredRoles = [];
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Map<String, dynamic> formValues = {};
   bool isLoading = true;
   String? error;
@@ -53,6 +53,10 @@ class _RolesPagesState extends State<RolesPages> {
 
   void _filterRoles(String query) {
     final allRoles = filteredRoles;
+    if (query.isEmpty) {
+      _loadRoles();
+      return;
+    }
     setState(() {
       filteredRoles = filterItems(allRoles, query, ['name']);
     });
@@ -128,9 +132,9 @@ class _RolesPagesState extends State<RolesPages> {
             title: 'Crear rol',
             formFields: [
               CustomInputField(
-                label: 'Nombre',
+                label: 'Nombre del rol',
                 placeHolder: 'Ingrese el nombre del rol',
-                suffixIcon: Icons.person,
+                suffixIcon: Icons.workspace_premium_rounded,
                 formProperty: 'name',
                 maxLength: 30,
                 fromValues: formValues,
@@ -210,9 +214,9 @@ class _RolesPagesState extends State<RolesPages> {
             title: 'Editar rol',
             formFields: [
               CustomInputField(
-                label: 'Nombre',
+                label: 'Nombre del rol',
                 placeHolder: 'Ingrese el nombre del rol',
-                suffixIcon: Icons.person,
+                suffixIcon: Icons.workspace_premium_rounded,
                 formProperty: 'name',
                 maxLength: 30,
                 initialValue: roleData['name'],

@@ -5,11 +5,15 @@ import '../models/user_model.dart';
 class UsersService {
   final HttpService _http = HttpService();
 
+  _setupAuth() async {
+    final loggedUser = await AuthService().getUser();
+    final token = loggedUser?['token'];
+    _http.setAuthToken(token);
+  }
+
   Future<List<User>> getUsers() async {
     try {
-      final loggedUser = await AuthService().getUser();
-      final token = loggedUser?['token'];
-      _http.setAuthToken(token);
+      await _setupAuth();
       final response = await _http.get('/users/allUsers');
       final List<dynamic> usersJson = response.data;
       return usersJson.map((json) => User.fromJson(json)).toList();
@@ -20,9 +24,7 @@ class UsersService {
 
   Future<User> getUserById(int id) async {
     try {
-      final loggedUser = await AuthService().getUser();
-      final token = loggedUser?['token'];
-      _http.setAuthToken(token);
+      await _setupAuth();
       final response = await _http.get('/users/$id');
       return User.fromJson(response.data);
     } catch (e) {
@@ -34,9 +36,7 @@ class UsersService {
     Map<String, dynamic> user,
   ) async {
     try {
-      final loggedUser = await AuthService().getUser();
-      final token = loggedUser?['token'];
-      _http.setAuthToken(token);
+      await _setupAuth();
       var data = {
         "name": user['name'],
         "lastName": user['lastName'],
@@ -55,17 +55,15 @@ class UsersService {
     Map<String, dynamic> user,
   ) async {
     try {
-      final loggedUser = await AuthService().getUser();
-      final token = loggedUser?['token'];
-      _http.setAuthToken(token);
-      var data = {
+      await _setupAuth();
+      final data = {
         "name": user['name'],
         "lastName": user['lastName'],
         "phone": user['phone'],
         "email": user['email'],
         "role_id": user['role_id'],
       };
-      var id = user['id'];
+      final id = user['id'];
       await _http.put('/users/$id', data: data);
     } catch (e) {
       rethrow;
@@ -74,9 +72,7 @@ class UsersService {
 
   Future<void> deleteUser(int id) async {
     try {
-      final loggedUser = await AuthService().getUser();
-      final token = loggedUser?['token'];
-      _http.setAuthToken(token);
+      await _setupAuth();
       await _http.delete('/users/$id');
     } catch (e) {
       rethrow;
