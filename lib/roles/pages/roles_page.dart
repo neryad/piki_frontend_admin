@@ -53,6 +53,10 @@ class _RolesPagesState extends State<RolesPages> {
 
   void _filterRoles(String query) {
     final allRoles = filteredRoles;
+    if (query.isEmpty) {
+      _loadRoles();
+      return;
+    }
     setState(() {
       filteredRoles = filterItems(allRoles, query, ['name']);
     });

@@ -68,6 +68,10 @@ class _UserPageState extends State<UserPage> {
 
   void _filterUsers(String query) {
     final allUsers = filteredUsers;
+    if (query.isEmpty) {
+      _loadUsers();
+      return;
+    }
     setState(() {
       filteredUsers = filterItems(
         allUsers,
