@@ -280,7 +280,7 @@ class _MaterialsPageState extends State<MaterialsPage> {
               items: suppliers.map((Suppliers sup) {
                 return DropdownMenuItem<int>(
                   value: sup.id,
-                  child: Text(sup.name),
+                  child: Text('${sup.name} ${sup.lastName}'),
                 );
               }).toList(),
               onChanged: (int? value) {
@@ -475,7 +475,7 @@ class _MaterialsPageState extends State<MaterialsPage> {
               items: suppliers.map((Suppliers sup) {
                 return DropdownMenuItem<int>(
                   value: sup.id,
-                  child: Text(sup.name),
+                  child: Text('${sup.name} ${sup.lastName}'),
                 );
               }).toList(),
               onChanged: (int? value) {

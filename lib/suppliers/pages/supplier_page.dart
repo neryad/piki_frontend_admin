@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:piki_admin/shared/components/reusable_button.dart';
@@ -54,28 +56,6 @@ class _SupplierPageState extends State<SupplierPage> {
       });
     }
   }
-
-  // Future<void> _loadSuppliers() async {
-  //   try {
-  //     setState(() {
-  //       isLoading = true;
-  //       error = null;
-  //     });
-
-  //     final suppliers = await _supplierService.getSuppliers();
-  //     setState(() {
-  //       filteredSuppliers =
-  //           suppliers.map((supplier) => supplier.toJson()).toList();
-  //       isLoading = false;
-  //     });
-  //   } catch (e) {
-  //     print(e);
-  //     setState(() {
-  //       error = e.toString();
-  //       isLoading = false;
-  //     });
-  //   }
-  // }
 
   void _filterSuppliers(String query) {
     final allSuppliers = filteredSuppliers;
@@ -147,14 +127,9 @@ class _SupplierPageState extends State<SupplierPage> {
                     ReusableButton(
                       childText: 'Editar',
                       onPressed: () async {
-                        //TODO: Implementar la edición de roles en el back
-                        // Roles roleToUpdate =
-                        //     await _roleService.getRole(role['id']);
-
-                        // print(roleToUpdate);
-                        // _editRoleDialog(context, role);
                         await _editSupplierDialog(context, supplier);
                       },
+                      iconData: Icons.edit,
                       buttonColor: AppTheme.rose,
                       childTextColor: Colors.white,
                     )
@@ -193,28 +168,86 @@ class _SupplierPageState extends State<SupplierPage> {
           return CustomDialog(
             title: 'Crear suplidor',
             formFields: [
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Nombre'),
-                onChanged: (value) {
-                  formValues['name'] = value;
+              CustomInputField(
+                label: 'Nombre',
+                placeHolder: 'Ingrese el nombre',
+                suffixIcon: Icons.person,
+                formProperty: 'name',
+                maxLength: 50,
+                fromValues: formValues,
+                customValidation: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese un nombre';
+                  }
+                  return null;
+                },
+                customOnChanged: (value) {
+                  setState(() {
+                    formValues['name'] = value;
+                  });
+                  return null;
                 },
               ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Apellido'),
-                onChanged: (value) {
-                  formValues['lastName'] = value;
+              CustomInputField(
+                label: 'Apellido',
+                placeHolder: 'Ingrese el apellido',
+                suffixIcon: Icons.person,
+                formProperty: 'lastName',
+                maxLength: 50,
+                fromValues: formValues,
+                customValidation: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese un apellido';
+                  }
+                  return null;
+                },
+                customOnChanged: (value) {
+                  setState(() {
+                    formValues['lastName'] = value;
+                  });
+                  return null;
                 },
               ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Teléfono'),
-                onChanged: (value) {
-                  formValues['phone'] = value;
+              CustomInputField(
+                label: 'Teléfono',
+                placeHolder: 'Ingrese el teléfono',
+                suffixIcon: Icons.phone,
+                formProperty: 'phone',
+                maxLength: 10,
+                keyboardType: TextInputType.phone,
+                fromValues: formValues,
+                customValidation: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese un teléfono';
+                  }
+                  return null;
+                },
+                customOnChanged: (value) {
+                  setState(() {
+                    formValues['phone'] = value;
+                  });
+                  return null;
                 },
               ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Correo'),
-                onChanged: (value) {
-                  formValues['email'] = value;
+              CustomInputField(
+                label: 'Correo',
+                placeHolder: 'Ingrese el correo',
+                suffixIcon: Icons.email,
+                formProperty: 'email',
+                maxLength: 50,
+                keyboardType: TextInputType.emailAddress,
+                fromValues: formValues,
+                customValidation: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese un correo';
+                  }
+                  return null;
+                },
+                customOnChanged: (value) {
+                  setState(() {
+                    formValues['email'] = value;
+                  });
+                  return null;
                 },
               ),
             ],
@@ -240,9 +273,9 @@ class _SupplierPageState extends State<SupplierPage> {
             title: 'Editar suplidor',
             formFields: [
               CustomInputField(
-                label: 'Correo',
-                placeHolder: 'Ingrese el correo',
-                suffixIcon: Icons.email,
+                label: 'Nombre',
+                placeHolder: 'Ingrese el nombre',
+                suffixIcon: Icons.person,
                 formProperty: 'name',
                 maxLength: 50,
                 initialValue: supplier['name'],
@@ -261,9 +294,9 @@ class _SupplierPageState extends State<SupplierPage> {
                 },
               ),
               CustomInputField(
-                label: 'Correo',
+                label: 'Apellido',
                 placeHolder: 'Ingrese el apellido',
-                suffixIcon: Icons.email,
+                suffixIcon: Icons.person,
                 formProperty: 'lastName',
                 maxLength: 50,
                 initialValue: supplier['lastName'],
@@ -282,12 +315,13 @@ class _SupplierPageState extends State<SupplierPage> {
                 },
               ),
               CustomInputField(
-                label: 'Correo',
+                label: 'Teléfono',
                 placeHolder: 'Ingrese el teléfono',
-                suffixIcon: Icons.email,
+                suffixIcon: Icons.phone,
                 formProperty: 'phone',
-                maxLength: 50,
+                maxLength: 10,
                 initialValue: supplier['phone'],
+                keyboardType: TextInputType.phone,
                 fromValues: formValues,
                 customValidation: (value) {
                   if (value == null || value.isEmpty) {
@@ -309,6 +343,7 @@ class _SupplierPageState extends State<SupplierPage> {
                 formProperty: 'email',
                 maxLength: 50,
                 initialValue: supplier['email'],
+                keyboardType: TextInputType.emailAddress,
                 fromValues: formValues,
                 customValidation: (value) {
                   if (value == null || value.isEmpty) {
