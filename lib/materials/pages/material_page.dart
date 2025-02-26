@@ -9,6 +9,8 @@ import 'package:piki_admin/shared/functions/table_filter.dart';
 import 'package:piki_admin/shared/widgets/custom_dialog.dart';
 import 'package:piki_admin/shared/widgets/custom_input_field.dart';
 import 'package:piki_admin/shared/widgets/show_snackbar.dart';
+import 'package:piki_admin/suppliers/models/supplier_models.dart';
+import 'package:piki_admin/suppliers/services/suppliers_services.dart';
 import 'package:piki_admin/theme/app_theme.dart';
 import 'package:piki_admin/shared/widgets/custom_data_table.dart';
 import 'package:piki_admin/shared/widgets/action_search_bar.dart';
@@ -22,6 +24,7 @@ class MaterialsPage extends StatefulWidget {
 
 class _MaterialsPageState extends State<MaterialsPage> {
   final MaterialsService _materialService = MaterialsService();
+  final SuppliersServices _suppliersServices = SuppliersServices();
   List<Map<String, dynamic>> filteredMaterials = [];
   bool isLoading = true;
   String? error;
@@ -30,11 +33,14 @@ class _MaterialsPageState extends State<MaterialsPage> {
     {"state": false, "name": "No disponible"},
   ];
   //TODO: Replace this with the actual API suppliers
-  final suppliers = [
-    {"id": 1, "name": "Suplidor 1"},
-    {"id": 2, "name": "Suplidor 2"},
-    {"id": 3, "name": "Suplidor 3"},
-  ];
+
+  List<Suppliers> suppliers = [];
+
+  // final suppliers = [
+  //   {"id": 1, "name": "Suplidor 1"},
+  //   {"id": 2, "name": "Suplidor 2"},
+  //   {"id": 3, "name": "Suplidor 3"},
+  // ];
   Map<String, dynamic> formValues = {
     "name": "String",
     "description": "String",
@@ -51,6 +57,15 @@ class _MaterialsPageState extends State<MaterialsPage> {
   void initState() {
     super.initState();
     _loadMaterials();
+    _loadSuppliers();
+  }
+
+  Future<void> _loadSuppliers() async {
+    try {
+      suppliers = await _suppliersServices.getSuppliers();
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   Future<void> _loadMaterials() async {
@@ -262,10 +277,10 @@ class _MaterialsPageState extends State<MaterialsPage> {
                   borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
-              items: suppliers.map((sup) {
+              items: suppliers.map((Suppliers sup) {
                 return DropdownMenuItem<int>(
-                  value: sup['id'] as int,
-                  child: Text(sup['name'] as String),
+                  value: sup.id,
+                  child: Text(sup.name),
                 );
               }).toList(),
               onChanged: (int? value) {
@@ -457,10 +472,10 @@ class _MaterialsPageState extends State<MaterialsPage> {
                 ),
               ),
               value: formValues['supplier_id'],
-              items: suppliers.map((sup) {
+              items: suppliers.map((Suppliers sup) {
                 return DropdownMenuItem<int>(
-                  value: sup['id'] as int,
-                  child: Text(sup['name'] as String),
+                  value: sup.id,
+                  child: Text(sup.name),
                 );
               }).toList(),
               onChanged: (int? value) {
