@@ -147,6 +147,7 @@ class MainPageState extends State<MainPage> {
                 onTap: () {
                   if (route['page'] == 'logout') {
                     AuthService().logout();
+                    _saveSelectedPage(0);
                     AppNavigator().navigationToReplacementPage(
                         thePageRouteName: AppRoutes.login);
                     return;
