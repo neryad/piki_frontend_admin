@@ -13,7 +13,7 @@ class RoleService {
 
   Future<List<Roles>> getRoles() async {
     try {
-      _setupAuth();
+      await _setupAuth();
       final response = await _http.get('/roles');
       final List<dynamic> rolesJson = response.data;
       return rolesJson.map((json) => Roles.fromJson(json)).toList();
@@ -26,7 +26,7 @@ class RoleService {
   Future<void> createRole(String role) async {
     var data = {'name': role};
     try {
-      _setupAuth();
+      await _setupAuth();
       await _http.post('/roles', data: data);
     } catch (e) {
       print(e);
@@ -37,7 +37,7 @@ class RoleService {
   Future<void> updateRole(int id, String role) async {
     var data = {'name': role};
     try {
-      _setupAuth();
+      await _setupAuth();
       await _http.put('/roles/$id', data: data);
     } catch (e) {
       print(e);
@@ -47,7 +47,7 @@ class RoleService {
 
   Future<void> deleteRole(int id) async {
     try {
-      _setupAuth();
+      await _setupAuth();
       await _http.delete('/roles/$id');
     } catch (e) {
       print(e);
@@ -57,7 +57,7 @@ class RoleService {
 
   Future<Roles> getRole(int id) async {
     try {
-      _setupAuth();
+      await _setupAuth();
       final response = await _http.get('/roles/$id');
       return Roles.fromJson(response.data);
     } catch (e) {

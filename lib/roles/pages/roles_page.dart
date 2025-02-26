@@ -41,7 +41,6 @@ class _RolesPagesState extends State<RolesPages> {
         filteredRoles = roles.map((role) => role.toMap()).toList();
         isLoading = false;
       });
-      print('filteredRoles: $filteredRoles');
     } catch (e) {
       print(e);
       setState(() {
@@ -60,8 +59,6 @@ class _RolesPagesState extends State<RolesPages> {
     setState(() {
       filteredRoles = filterItems(allRoles, query, ['name']);
     });
-
-    print(filteredRoles);
   }
 
   @override

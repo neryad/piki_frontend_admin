@@ -6,6 +6,7 @@ import 'package:piki_admin/materials/pages/material_page.dart';
 import 'package:piki_admin/roles/pages/roles_page.dart';
 import 'package:piki_admin/shared/routes/app_navigator.dart';
 import 'package:piki_admin/shared/routes/app_routes.dart';
+import 'package:piki_admin/suppliers/pages/supplier_page.dart';
 import 'package:piki_admin/theme/app_theme.dart';
 import 'package:piki_admin/users/pages/user_page.dart';
 
@@ -28,6 +29,11 @@ class _MainPageState extends State<MainPage> {
       'icon': Icons.offline_pin_rounded,
       'title': 'Materiales',
       'page': const MaterialsPage(),
+    },
+    {
+      'icon': Icons.account_box_rounded,
+      'title': 'Suplidores',
+      'page': const SupplierPage(),
     },
     {
       'icon': Icons.people,
@@ -59,7 +65,7 @@ class _MainPageState extends State<MainPage> {
         centerTitle: false,
         title: const Text(
           'Piki Creativa - Panel Administrativo',
-          style: TextStyle(fontSize: 30),
+          style: TextStyle(fontSize: 30, color: Colors.white),
         ),
       ),
       drawer: Drawer(
