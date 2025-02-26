@@ -1,5 +1,5 @@
-// ignore_for_file: library_private_types_in_public_api
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:piki_admin/auth/services/auth_services.dart';
 import 'package:piki_admin/dashboard/pages/dashboard_page.dart';
 import 'package:piki_admin/materials/pages/material_page.dart';
@@ -14,11 +14,12 @@ class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
   @override
-  _MainPageState createState() => _MainPageState();
+  MainPageState createState() => MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class MainPageState extends State<MainPage> {
   Widget _selectedPage = const DashboardPage();
+  int _selectedPageIndex = 0;
   final routePageList = [
     {
       'icon': Icons.dashboard,
@@ -52,10 +53,37 @@ class _MainPageState extends State<MainPage> {
     },
   ];
 
-  void _onItemTapped(dynamic object) {
+  @override
+  void initState() {
+    super.initState();
+    _loadSelectedPage();
+  }
+
+  Future<void> _loadSelectedPage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final selectedPageIndex = prefs.getInt('selectedPageIndex') ?? 0;
     setState(() {
-      _selectedPage = object['page'] as Widget;
+      _selectedPageIndex = selectedPageIndex;
+      _selectedPage = routePageList[selectedPageIndex]['page'] as Widget;
     });
+  }
+
+  Future<void> _saveSelectedPage(int index) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('selectedPageIndex', index);
+  }
+
+  Future<String> _getUserName() async {
+    final user = await AuthService().getUser();
+    return user != null ? '${user['name']} ${user['lastName']}' : 'No User';
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedPageIndex = index;
+      _selectedPage = routePageList[index]['page'] as Widget;
+    });
+    _saveSelectedPage(index);
   }
 
   @override
@@ -72,22 +100,50 @@ class _MainPageState extends State<MainPage> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(
+            DrawerHeader(
+              decoration: const BoxDecoration(
                 color: AppTheme.pinkSalmon,
               ),
-              child: Text(
-                'Menú',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
+              child: FutureBuilder(
+                future: _getUserName(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Text('Cargando...');
+                  }
+                  if (snapshot.hasData) {
+                    return Column(
+                      children: [
+                        ClipOval(
+                          child: Image.network(
+                            'https://eu.ui-avatars.com/api/?background=ff0077&color=FFFFFF&name=${snapshot.data}&bold=true',
+                            fit: BoxFit.cover,
+                            width: 100.0,
+                            height: 100.0,
+                          ),
+                        ),
+                        Text(
+                          snapshot.data as String,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontFamily: 'GoldenChesse',
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                  return const Text('Error al cargar el usuario');
+                },
               ),
             ),
-            ...routePageList.map((route) {
+            ...routePageList.asMap().entries.map((entry) {
+              int index = entry.key;
+              var route = entry.value;
               return ListTile(
                 leading: Icon(route['icon'] as IconData),
                 title: Text(route['title'] as String),
+                selected:
+                    _selectedPageIndex == index, // Marca la opción seleccionada
                 onTap: () {
                   if (route['page'] == 'logout') {
                     AuthService().logout();
@@ -96,7 +152,7 @@ class _MainPageState extends State<MainPage> {
                     return;
                   }
 
-                  _onItemTapped(route);
+                  _onItemTapped(index);
                   Navigator.pop(context); // Cierra el menú
                 },
               );
