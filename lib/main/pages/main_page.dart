@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:piki_admin/slider/pages/slider_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:piki_admin/auth/services/auth_services.dart';
 import 'package:piki_admin/dashboard/pages/dashboard_page.dart';
@@ -37,6 +38,11 @@ class MainPageState extends State<MainPage> {
       'page': const SupplierPage(),
     },
     {
+      'icon': Icons.image,
+      'title': 'Sliders',
+      'page': const SliderPage(),
+    },
+    {
       'icon': Icons.people,
       'title': 'Usuarios',
       'page': const UserPage(),
@@ -48,7 +54,7 @@ class MainPageState extends State<MainPage> {
     },
     {
       'icon': Icons.power_settings_new_outlined,
-      'title': 'Cerrar sesión',
+      'title': 'Cerrar sesion',
       'page': 'logout',
     },
   ];
@@ -117,15 +123,15 @@ class MainPageState extends State<MainPage> {
                           child: Image.network(
                             'https://eu.ui-avatars.com/api/?background=ff0077&color=FFFFFF&name=${snapshot.data}&bold=true',
                             fit: BoxFit.cover,
-                            width: 100.0,
-                            height: 100.0,
+                            width: 90.0,
+                            height: 90.0,
                           ),
                         ),
                         Text(
                           snapshot.data as String,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 20,
+                            fontSize: 30,
                             fontFamily: 'GoldenChesse',
                           ),
                         ),
@@ -141,7 +147,13 @@ class MainPageState extends State<MainPage> {
               var route = entry.value;
               return ListTile(
                 leading: Icon(route['icon'] as IconData),
-                title: Text(route['title'] as String),
+                title: Text(
+                  route['title'] as String,
+                  style: const TextStyle(
+                    fontFamily: 'GoldenChesse',
+                    fontSize: 20,
+                  ),
+                ),
                 selected:
                     _selectedPageIndex == index, // Marca la opción seleccionada
                 onTap: () {
