@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
-import 'package:piki_admin/auth/services/auth_services.dart';
-import 'package:piki_admin/shared/services/http_service.dart';
-import 'package:piki_admin/slider/models/slider_model.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:piki_admin/auth/services/auth_services.dart';
+import 'package:piki_admin/products/models/products_model.dart';
+import 'package:piki_admin/shared/services/http_service.dart';
 
-class SliderService {
+class ProductsService {
   final HttpService _http = HttpService();
 
   _setupAuth() async {
@@ -13,69 +13,73 @@ class SliderService {
     _http.setAuthToken(token);
   }
 
-  Future<List<SliderModel>> getSliders() async {
+  Future<List<Product>> getProduct() async {
     try {
       await _setupAuth();
-      final response = await _http.get('/sliders');
-      final List<dynamic> slidersJson = response.data;
-      return slidersJson.map((json) => SliderModel.fromJson(json)).toList();
+      final response = await _http.get('/products');
+      final List<dynamic> usersJson = response.data;
+      return usersJson.map((json) => Product.fromJson(json)).toList();
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> createSlider(Map<String, dynamic> formValues) async {
+  Future<void> createProduct(Map<String, dynamic> formValues) async {
     try {
       await _setupAuth();
 
-      // Convertir Uint8List a MultipartFile
       final file = MultipartFile.fromBytes(
         formValues['imageBytes'],
         filename: 'image.jpg',
         contentType: MediaType('image', 'jpeg'),
       );
 
-      // Crear el FormData correctamente
       FormData formData = FormData.fromMap({
         'image': file,
-        'link': formValues['link'],
+        'name': formValues['link'],
+        'description': formValues['link'],
+        'price': formValues['link'],
+        'stock': formValues['link'],
+        'offerPrice': formValues['link'],
         'isActive': formValues['isActive'],
       });
 
-      await _http.post('/sliders', data: formData);
+      await _http.post('/products', data: formData);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> updateSlider(Map<String, dynamic> formValues, int id) async {
+  Future<void> updateProduct(Map<String, dynamic> formValues, int id) async {
     try {
       await _setupAuth();
 
-      // Convertir Uint8List a MultipartFile
       final file = MultipartFile.fromBytes(
         formValues['imageBytes'],
         filename: 'image.jpg',
         contentType: MediaType('image', 'jpeg'),
       );
 
-      // Crear el FormData correctamente
       FormData formData = FormData.fromMap({
         'image': file,
-        'link': formValues['link'],
-        'isActive': formValues['isActive'] ? 1 : 0,
+        'name': formValues['link'],
+        'description': formValues['link'],
+        'price': formValues['link'],
+        'stock': formValues['link'],
+        'offerPrice': formValues['link'],
+        'isActive': formValues['isActive'],
       });
 
-      await _http.put('/sliders/$id', data: formData);
+      await _http.put('/products/$id', data: formData);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> deleteSlider(int id) async {
+  Future<void> deleteProduct(int id) async {
     try {
       await _setupAuth();
-      await _http.delete('/sliders/$id');
+      await _http.delete('/products/$id');
     } catch (e) {
       rethrow;
     }

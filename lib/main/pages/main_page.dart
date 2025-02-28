@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:piki_admin/products/pages/products_page.dart';
 import 'package:piki_admin/slider/pages/slider_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:piki_admin/auth/services/auth_services.dart';
@@ -26,6 +27,11 @@ class MainPageState extends State<MainPage> {
       'icon': Icons.dashboard,
       'title': 'Dashboard',
       'page': const DashboardPage(),
+    },
+    {
+      'icon': Icons.shopping_bag,
+      'title': 'Productos',
+      'page': const ProductsPage(),
     },
     {
       'icon': Icons.offline_pin_rounded,
