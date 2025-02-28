@@ -14,7 +14,7 @@ class SliderModel {
   final int id;
   final String imageUrl;
   final String link;
-  final String isActive;
+  final int isActive;
 
   SliderModel({
     required this.id,
@@ -34,6 +34,6 @@ class SliderModel {
         "id": id,
         "imageUrl": imageUrl,
         "link": link,
-        "isActive": isActive == 'true' ? 'Activo' : 'Inactivo',
+        "isActive": isActive == 1 ? 'Activo' : 'Inactivo',
       };
 }

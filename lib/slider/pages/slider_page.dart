@@ -29,6 +29,7 @@ class _SliderPageState extends State<SliderPage> {
   bool isLoading = true;
   String? error;
   Map<String, dynamic> formValues = {
+    'imageBytes': null,
     'link': '',
     'isActive': true,
   };
@@ -89,6 +90,7 @@ class _SliderPageState extends State<SliderPage> {
     if (result != null && result.files.first.bytes != null) {
       setState(() {
         selectedImageBytes = result.files.first.bytes;
+        formValues['imageBytes'] = selectedImageBytes;
       });
     }
   }
@@ -159,72 +161,269 @@ class _SliderPageState extends State<SliderPage> {
   }
 
   _createSliderDialog(BuildContext context) {
+    selectedImageBytes = null;
+    bool isLoading = false;
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return CustomDialog(
-          title: 'Crear slider',
-          formFields: [
-            selectedImageBytes != null
-                ? Image.memory(selectedImageBytes!,
-                    height: 300, width: double.infinity, fit: BoxFit.cover)
-                : Image.asset('assets/loading-pink.jpg',
-                    height: 300, width: double.infinity, fit: BoxFit.cover),
-            const SizedBox(height: 10),
-            ReusableButton(
-                childText: 'Subir imagen',
-                onPressed: () => _pickImage(),
-                buttonColor: AppTheme.pinkSalmonShade200,
-                childTextColor: Colors.white,
-                iconData: Icons.upload),
-            const SizedBox(height: 10),
-            CustomInputField(
-                label: 'Enlace',
-                placeHolder: 'Ingrese el enlace',
-                suffixIcon: Icons.link,
-                formProperty: 'link',
-                fromValues: formValues,
-                maxLength: 150,
-                customValidation: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese un enlace';
-                  }
-                  return null;
-                },
-                customOnChanged: (value) {
-                  setState(() {
-                    formValues['link'] = value;
-                  });
-                  return null;
-                }),
-            DropdownButtonFormField<bool>(
-              decoration: InputDecoration(
-                labelText: 'Estado',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return CustomDialog(
+              title: 'Crear slider',
+              formFields: [
+                selectedImageBytes != null
+                    ? Image.memory(
+                        selectedImageBytes!,
+                        height: 300,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.asset(
+                        'assets/no-image-selected.jpg',
+                        height: 300,
+                        width: double.infinity,
+                        fit: BoxFit.contain,
+                      ),
+                const SizedBox(height: 10),
+                ReusableButton(
+                  childText: 'Subir imagen',
+                  onPressed: () async {
+                    await _pickImage();
+                    setState(() {});
+                  },
+                  buttonColor: AppTheme.pinkSalmonShade200,
+                  childTextColor: Colors.white,
+                  iconData: Icons.upload,
                 ),
-              ),
-              items: states.map((state) {
-                return DropdownMenuItem<bool>(
-                  value: state['state'] as bool,
-                  child: Text(state['name'] as String),
-                );
-              }).toList(),
-              onChanged: (bool? value) {
-                setState(() {
-                  formValues['isActive'] = value;
-                });
-              },
-            ),
-          ],
-          onCancel: () => Navigator.of(context).pop(),
-          onConfirm: () async {},
+                const SizedBox(height: 10),
+                CustomInputField(
+                  label: 'Enlace',
+                  placeHolder: 'Ingrese el enlace',
+                  suffixIcon: Icons.link,
+                  formProperty: 'link',
+                  fromValues: formValues,
+                  maxLength: 150,
+                  customValidation: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingrese un enlace';
+                    }
+                    return null;
+                  },
+                  customOnChanged: (value) {
+                    setState(() {
+                      formValues['link'] = value;
+                    });
+                    return null;
+                  },
+                ),
+                DropdownButtonFormField<bool>(
+                  decoration: InputDecoration(
+                    labelText: 'Estado',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  items: states.map((state) {
+                    return DropdownMenuItem<bool>(
+                      value: state['state'] as bool,
+                      child: Text(state['name'] as String),
+                    );
+                  }).toList(),
+                  onChanged: (bool? value) {
+                    setState(() {
+                      formValues['isActive'] = value;
+                    });
+                  },
+                ),
+                const SizedBox(height: 20),
+                if (isLoading) const _Loading(),
+              ],
+              onCancel: () => Navigator.of(context).pop(),
+              onConfirm: isLoading
+                  ? () {}
+                  : () async {
+                      setState(() {
+                        isLoading = true;
+                      });
+
+                      try {
+                        await _sliderService.createSlider(formValues);
+                        Navigator.of(context).pop();
+                        _loadSliders();
+                      } catch (e) {
+                        log('Error: $e');
+                      } finally {
+                        setState(() {
+                          isLoading = false;
+                        });
+                      }
+                    },
+            );
+          },
         );
       },
     );
   }
 
-  _editSliderDialog(BuildContext context, Map<String, dynamic> slider) {}
+  _editSliderDialog(BuildContext context, Map<String, dynamic> slider) async {
+    selectedImageBytes = null;
+    bool isLoading = false;
 
-  _deleteSliderDialog(BuildContext context, int id) {}
+    // Descargar la imagen antes de mostrar el diálogo
+    Uint8List? imageBytes =
+        await _sliderService.fetchImageBytes(slider['imageUrl']);
+
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            // Actualizar selectedImageBytes dentro del StatefulBuilder
+            if (imageBytes != null && selectedImageBytes == null) {
+              Future.delayed(Duration.zero, () {
+                setState(() {
+                  selectedImageBytes = imageBytes;
+                });
+              });
+            }
+
+            return CustomDialog(
+              title: 'Editar slider',
+              formFields: [
+                selectedImageBytes != null
+                    ? Image.memory(
+                        selectedImageBytes!,
+                        height: 300,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.asset(
+                        'assets/no-image-selected.jpg',
+                        height: 300,
+                        width: double.infinity,
+                        fit: BoxFit.contain,
+                      ),
+                const SizedBox(height: 10),
+                ReusableButton(
+                  childText: 'Subir imagen',
+                  onPressed: () async {
+                    await _pickImage();
+                    setState(() {});
+                  },
+                  buttonColor: AppTheme.pinkSalmonShade200,
+                  childTextColor: Colors.white,
+                  iconData: Icons.upload,
+                ),
+                const SizedBox(height: 10),
+                CustomInputField(
+                  label: 'Enlace',
+                  placeHolder: 'Ingrese el enlace',
+                  suffixIcon: Icons.link,
+                  formProperty: 'link',
+                  fromValues: formValues,
+                  initialValue: slider['link'],
+                  maxLength: 150,
+                  customValidation: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingrese un enlace';
+                    }
+                    return null;
+                  },
+                  customOnChanged: (value) {
+                    setState(() {
+                      formValues['link'] = value;
+                    });
+                    return null;
+                  },
+                ),
+                DropdownButtonFormField<bool>(
+                  value: slider['isActive'] == 'Activo' ? true : false,
+                  decoration: InputDecoration(
+                    labelText: 'Estado',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  items: states.map((state) {
+                    return DropdownMenuItem<bool>(
+                      value: state['state'] as bool,
+                      child: Text(state['name'] as String),
+                    );
+                  }).toList(),
+                  onChanged: (bool? value) {
+                    setState(() {
+                      formValues['isActive'] = value;
+                    });
+                  },
+                ),
+                const SizedBox(height: 20),
+                if (isLoading) const _Loading(),
+              ],
+              onCancel: () => Navigator.of(context).pop(),
+              onConfirm: isLoading
+                  ? () {}
+                  : () async {
+                      setState(() {
+                        isLoading = true;
+                      });
+
+                      try {
+                        await _sliderService.updateSlider(
+                            formValues, slider['id']);
+                        Navigator.of(context).pop();
+                        _loadSliders();
+                      } catch (e) {
+                        log('Error: $e');
+                      } finally {
+                        setState(() {
+                          isLoading = false;
+                        });
+                      }
+                    },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  _deleteSliderDialog(BuildContext context, int id) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomDialog(
+            title: 'Eliminar slider',
+            dialogSize: 0.4,
+            formFields: const [
+              Text('¿Estás seguro de querer eliminar este slider?'),
+            ],
+            onCancel: () => Navigator.of(context).pop(),
+            onConfirm: () async {
+              try {
+                await _sliderService.deleteSlider(id);
+                Navigator.of(context).pop();
+                _loadSliders();
+              } catch (e) {
+                log('Error: $e');
+              }
+            });
+      },
+    );
+  }
+}
+
+class _Loading extends StatelessWidget {
+  const _Loading();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        CircularProgressIndicator(),
+        SizedBox(width: 10),
+        Text('Enviando información...'),
+      ],
+    );
+  }
 }
