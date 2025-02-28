@@ -162,7 +162,6 @@ class _SliderPageState extends State<SliderPage> {
 
   _createSliderDialog(BuildContext context) {
     selectedImageBytes = null;
-    bool isLoading = false;
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -236,28 +235,25 @@ class _SliderPageState extends State<SliderPage> {
                   },
                 ),
                 const SizedBox(height: 20),
-                if (isLoading) const _Loading(),
               ],
               onCancel: () => Navigator.of(context).pop(),
-              onConfirm: isLoading
-                  ? () {}
-                  : () async {
-                      setState(() {
-                        isLoading = true;
-                      });
+              onConfirm: () async {
+                setState(() {
+                  isLoading = true;
+                });
 
-                      try {
-                        await _sliderService.createSlider(formValues);
-                        Navigator.of(context).pop();
-                        _loadSliders();
-                      } catch (e) {
-                        log('Error: $e');
-                      } finally {
-                        setState(() {
-                          isLoading = false;
-                        });
-                      }
-                    },
+                try {
+                  await _sliderService.createSlider(formValues);
+                  Navigator.of(context).pop();
+                  _loadSliders();
+                } catch (e) {
+                  log('Error: $e');
+                } finally {
+                  setState(() {
+                    isLoading = false;
+                  });
+                }
+              },
             );
           },
         );
@@ -267,9 +263,7 @@ class _SliderPageState extends State<SliderPage> {
 
   _editSliderDialog(BuildContext context, Map<String, dynamic> slider) async {
     selectedImageBytes = null;
-    bool isLoading = false;
 
-    // Descargar la imagen antes de mostrar el diálogo
     Uint8List? imageBytes =
         await _sliderService.fetchImageBytes(slider['imageUrl']);
 
@@ -283,6 +277,7 @@ class _SliderPageState extends State<SliderPage> {
               Future.delayed(Duration.zero, () {
                 setState(() {
                   selectedImageBytes = imageBytes;
+                  formValues['imageBytes'] = selectedImageBytes;
                 });
               });
             }
@@ -357,29 +352,25 @@ class _SliderPageState extends State<SliderPage> {
                   },
                 ),
                 const SizedBox(height: 20),
-                if (isLoading) const _Loading(),
               ],
               onCancel: () => Navigator.of(context).pop(),
-              onConfirm: isLoading
-                  ? () {}
-                  : () async {
-                      setState(() {
-                        isLoading = true;
-                      });
+              onConfirm: () async {
+                setState(() {
+                  isLoading = true;
+                });
 
-                      try {
-                        await _sliderService.updateSlider(
-                            formValues, slider['id']);
-                        Navigator.of(context).pop();
-                        _loadSliders();
-                      } catch (e) {
-                        log('Error: $e');
-                      } finally {
-                        setState(() {
-                          isLoading = false;
-                        });
-                      }
-                    },
+                try {
+                  await _sliderService.updateSlider(formValues, slider['id']);
+                  Navigator.of(context).pop();
+                  _loadSliders();
+                } catch (e) {
+                  log('Error: $e');
+                } finally {
+                  setState(() {
+                    isLoading = false;
+                  });
+                }
+              },
             );
           },
         );
@@ -408,22 +399,6 @@ class _SliderPageState extends State<SliderPage> {
               }
             });
       },
-    );
-  }
-}
-
-class _Loading extends StatelessWidget {
-  const _Loading();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        CircularProgressIndicator(),
-        SizedBox(width: 10),
-        Text('Enviando información...'),
-      ],
     );
   }
 }
