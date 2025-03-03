@@ -46,6 +46,7 @@ class _UserPageState extends State<UserPage> {
       final users = await _usersService.getUsers();
       setState(() {
         filteredUsers = users.map((user) => user.toMap()).toList();
+        filteredUsers = filteredUsers.reversed.toList();
         isLoading = false;
       });
       log('filteredUsers: $filteredUsers');

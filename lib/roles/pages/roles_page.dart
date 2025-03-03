@@ -39,6 +39,7 @@ class _RolesPagesState extends State<RolesPages> {
       final roles = await _roleService.getRoles();
       setState(() {
         filteredRoles = roles.map((role) => role.toMap()).toList();
+        filteredRoles = filteredRoles.reversed.toList();
         isLoading = false;
       });
     } catch (e) {

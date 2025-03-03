@@ -46,6 +46,7 @@ class _SupplierPageState extends State<SupplierPage> {
               .format(DateTime.parse(supplierMap['created_at']));
           return supplierMap;
         }).toList();
+        filteredSuppliers = filteredSuppliers.reversed.toList();
         isLoading = false;
       });
     } catch (e) {

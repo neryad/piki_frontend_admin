@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:piki_admin/shared/components/reusable_button.dart';
+import 'package:piki_admin/shared/functions/fetch_images_bytes.dart';
 import 'package:piki_admin/shared/functions/table_filter.dart';
 import 'package:piki_admin/shared/widgets/action_search_bar.dart';
 import 'package:piki_admin/shared/widgets/custom_data_table.dart';
@@ -54,7 +55,6 @@ class _SliderPageState extends State<SliderPage> {
       final sliders = await _sliderService.getSliders();
       setState(() {
         filteredSliders = sliders.map((user) => user.toJson()).toList();
-        //TODO: ADD THIS LINE IN OTHER CRUD'S PAGES
         filteredSliders = filteredSliders.reversed.toList();
         isLoading = false;
       });
@@ -264,8 +264,7 @@ class _SliderPageState extends State<SliderPage> {
   _editSliderDialog(BuildContext context, Map<String, dynamic> slider) async {
     selectedImageBytes = null;
 
-    Uint8List? imageBytes =
-        await _sliderService.fetchImageBytes(slider['imageUrl']);
+    Uint8List? imageBytes = await fetchImageBytes(slider['imageUrl']);
 
     return showDialog<void>(
       context: context,

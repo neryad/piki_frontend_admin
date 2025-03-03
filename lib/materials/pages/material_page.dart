@@ -77,10 +77,11 @@ class _MaterialsPageState extends State<MaterialsPage> {
       formValues['date'] = DateTime.now().toString();
       final materials = await _materialService.getMaterials();
       setState(() {
-        filteredMaterials = materials.map((user) => user.toJson()).toList();
+        filteredMaterials = materials.map((mat) => mat.toJson()).toList();
+        filteredMaterials = filteredMaterials.reversed.toList();
         isLoading = false;
       });
-      log('filteredUsers: $filteredMaterials');
+      log('filteredMaterials: $filteredMaterials');
     } catch (e) {
       setState(() {
         error = e.toString();
@@ -131,7 +132,7 @@ class _MaterialsPageState extends State<MaterialsPage> {
                   columns: const [
                     'Nombre',
                     'Descripción',
-                    'Disponible',
+                    'Estado',
                     'Costo',
                     'Suplidor',
                     'Cantidad',
@@ -428,7 +429,7 @@ class _MaterialsPageState extends State<MaterialsPage> {
                   borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
-              value: formValues['isAvailable'] == 1 ? true : false,
+              value: formValues['isAvailable'] == 'Disponible' ? true : false,
               items: availableMaterials.map((material) {
                 return DropdownMenuItem<bool>(
                   value: material['state'] as bool,

@@ -13,7 +13,7 @@ class Material {
   final int id;
   final String name;
   final String description;
-  final int isAvailable;
+  final dynamic isAvailable;
   final double cost;
   final DateTime date;
   final int supplierId;
@@ -54,7 +54,7 @@ class Material {
         "id": id,
         "name": name,
         "description": description,
-        "isAvailable": isAvailable,
+        "isAvailable": isAvailable == 1 ? 'Disponible' : 'No disponible',
         "cost": cost,
         "date":
             "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}",

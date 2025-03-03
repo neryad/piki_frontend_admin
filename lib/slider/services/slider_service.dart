@@ -1,5 +1,3 @@
-import 'dart:developer';
-import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:piki_admin/auth/services/auth_services.dart';
 import 'package:piki_admin/shared/services/http_service.dart';
@@ -81,21 +79,5 @@ class SliderService {
     } catch (e) {
       rethrow;
     }
-  }
-
-  Future<Uint8List?> fetchImageBytes(String imageUrl) async {
-    try {
-      final response = await Dio().get(
-        imageUrl,
-        options: Options(responseType: ResponseType.bytes),
-      );
-
-      if (response.statusCode == 200) {
-        return Uint8List.fromList(response.data);
-      }
-    } catch (e) {
-      log('Error descargando la imagen: $e');
-    }
-    return null;
   }
 }
