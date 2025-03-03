@@ -1,7 +1,7 @@
 import 'package:piki_admin/auth/pages/check_auth_screen.dart';
 import 'package:piki_admin/auth/pages/login_pages.dart';
 import 'package:flutter/material.dart';
-import 'package:piki_admin/main/pages/main_page.dart';
+import 'package:piki_admin/main/main_page.dart';
 
 class AppRoutes {
   factory AppRoutes() => _instance;
