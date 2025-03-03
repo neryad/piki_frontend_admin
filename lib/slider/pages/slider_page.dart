@@ -55,7 +55,6 @@ class _SliderPageState extends State<SliderPage> {
       final sliders = await _sliderService.getSliders();
       setState(() {
         filteredSliders = sliders.map((user) => user.toJson()).toList();
-        //TODO: ADD THIS LINE IN OTHER CRUD'S PAGES
         filteredSliders = filteredSliders.reversed.toList();
         isLoading = false;
       });

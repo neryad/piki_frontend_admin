@@ -15,7 +15,7 @@ class Product {
   final String description;
   final double price;
   final int stock;
-  final int isAvailable;
+  final dynamic isAvailable;
   final double offerPrice;
   final String imageUrl;
   final DateTime createdAt;
@@ -50,7 +50,7 @@ class Product {
         "description": description,
         "price": price,
         "stock": stock,
-        "isAvailable": isAvailable,
+        "isAvailable": isAvailable == 1 ? 'Disponible' : 'No disponible',
         "offerPrice": offerPrice,
         "imageUrl": imageUrl,
         "created_at": createdAt.toIso8601String(),

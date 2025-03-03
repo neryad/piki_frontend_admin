@@ -77,10 +77,11 @@ class _MaterialsPageState extends State<MaterialsPage> {
       formValues['date'] = DateTime.now().toString();
       final materials = await _materialService.getMaterials();
       setState(() {
-        filteredMaterials = materials.map((user) => user.toJson()).toList();
+        filteredMaterials = materials.map((mat) => mat.toJson()).toList();
+        filteredMaterials = filteredMaterials.reversed.toList();
         isLoading = false;
       });
-      log('filteredUsers: $filteredMaterials');
+      log('filteredMaterials: $filteredMaterials');
     } catch (e) {
       setState(() {
         error = e.toString();

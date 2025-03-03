@@ -13,7 +13,7 @@ class ProductsService {
     _http.setAuthToken(token);
   }
 
-  Future<List<Product>> getProduct() async {
+  Future<List<Product>> getProducts() async {
     try {
       await _setupAuth();
       final response = await _http.get('/products');
@@ -36,12 +36,12 @@ class ProductsService {
 
       FormData formData = FormData.fromMap({
         'image': file,
-        'name': formValues['link'],
-        'description': formValues['link'],
-        'price': formValues['link'],
-        'stock': formValues['link'],
-        'offerPrice': formValues['link'],
-        'isActive': formValues['isActive'],
+        'name': formValues['name'],
+        'description': formValues['description'],
+        'price': formValues['price'],
+        'stock': formValues['stock'],
+        'offerPrice': formValues['offerPrice'],
+        'isAvailable': formValues['isAvailable'],
       });
 
       await _http.post('/products', data: formData);
@@ -62,12 +62,12 @@ class ProductsService {
 
       FormData formData = FormData.fromMap({
         'image': file,
-        'name': formValues['link'],
-        'description': formValues['link'],
-        'price': formValues['link'],
-        'stock': formValues['link'],
-        'offerPrice': formValues['link'],
-        'isActive': formValues['isActive'],
+        'name': formValues['name'],
+        'description': formValues['description'],
+        'price': formValues['price'],
+        'stock': formValues['stock'],
+        'offerPrice': formValues['offerPrice'],
+        'isAvailable': formValues['isAvailable'] ? 1 : 0,
       });
 
       await _http.put('/products/$id', data: formData);
