@@ -136,7 +136,7 @@ class _MaterialsPageState extends State<MaterialsPage> {
                     'Costo',
                     'Suplidor',
                     'Cantidad',
-                    'unidades',
+                    'Unidades',
                     'Costo Unidad',
                     'Opciones'
                   ],
