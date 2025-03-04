@@ -5,11 +5,12 @@
 // import 'package:meta/meta.dart';
 import 'dart:convert';
 
-Material materialFromJson(String str) => Material.fromJson(json.decode(str));
+MaterialModel materialFromJson(String str) =>
+    MaterialModel.fromJson(json.decode(str));
 
-String materialToJson(Material data) => json.encode(data.toJson());
+String materialToJson(MaterialModel data) => json.encode(data.toJson());
 
-class Material {
+class MaterialModel {
   final int id;
   final String name;
   final String description;
@@ -22,7 +23,7 @@ class Material {
   final double costByUnit;
   final DateTime createdAt;
 
-  Material({
+  MaterialModel({
     required this.id,
     required this.name,
     required this.description,
@@ -36,7 +37,7 @@ class Material {
     required this.createdAt,
   });
 
-  factory Material.fromJson(Map<String, dynamic> json) => Material(
+  factory MaterialModel.fromJson(Map<String, dynamic> json) => MaterialModel(
         id: json["id"],
         name: json["name"],
         description: json["description"],
