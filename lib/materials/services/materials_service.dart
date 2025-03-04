@@ -13,12 +13,12 @@ class MaterialsService {
     _http.setAuthToken(token);
   }
 
-  Future<List<Material>> getMaterials() async {
+  Future<List<MaterialModel>> getMaterials() async {
     try {
       await _setupAuth();
       final response = await _http.get('/materials');
       final List<dynamic> materialsJson = response.data;
-      return materialsJson.map((json) => Material.fromJson(json)).toList();
+      return materialsJson.map((json) => MaterialModel.fromJson(json)).toList();
     } catch (e) {
       rethrow;
     }

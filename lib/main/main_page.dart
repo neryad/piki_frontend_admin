@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:piki_admin/products/pages/products_page.dart';
+import 'package:piki_admin/products_materials/pages/product_material_page.dart';
 import 'package:piki_admin/slider/pages/slider_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:piki_admin/auth/services/auth_services.dart';
@@ -37,6 +38,11 @@ class MainPageState extends State<MainPage> {
       'icon': Icons.offline_pin_rounded,
       'title': 'Materiales',
       'page': const MaterialsPage(),
+    },
+    {
+      'icon': Icons.brush,
+      'title': 'Material de productos',
+      'page': const ProductsMaterialPage(),
     },
     {
       'icon': Icons.account_box_rounded,
