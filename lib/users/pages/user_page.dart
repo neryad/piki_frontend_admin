@@ -281,8 +281,10 @@ class _UserPageState extends State<UserPage> {
               }).toList(),
               value: formValues['role_id'],
               onChanged: (int? value) {
+                print(formValues['role_id']);
+                print(value);
                 setState(() {
-                  formValues['role_id'] = value == value;
+                  formValues['role_id'] = value;
                 });
               },
             ),
