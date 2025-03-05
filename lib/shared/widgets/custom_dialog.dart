@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:piki_admin/shared/components/reusable_button.dart';
 import 'package:piki_admin/theme/app_theme.dart';
 
-class CustomDialog extends StatelessWidget {
+class CustomDialog extends StatefulWidget {
   final String title;
   final List<Widget> formFields;
   final VoidCallback onCancel;
-  final VoidCallback onConfirm;
+  final Future<void> Function() onConfirm;
   final double dialogSize;
   final String cancelText;
   final String confirmText;
@@ -35,62 +35,82 @@ class CustomDialog extends StatelessWidget {
   });
 
   @override
+  State<CustomDialog> createState() => _CustomDialogState();
+}
+
+class _CustomDialogState extends State<CustomDialog> {
+  bool _isLoading = false;
+
+  Future<void> _handleConfirm() async {
+    setState(() => _isLoading = true);
+    await widget.onConfirm();
+    setState(() => _isLoading = false);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
-        width: MediaQuery.of(context).size.width * dialogSize,
+        width: MediaQuery.of(context).size.width * widget.dialogSize,
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
+            Text(widget.title, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 16),
-            ...formFields,
+            ...widget.formFields,
             const SizedBox(height: 16),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final isSmallScreen = constraints.maxWidth <
-                    400; // punto de quiebre para diálogos pequeños
+            if (_isLoading)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CircularProgressIndicator(),
+                  const SizedBox(width: 10),
+                  Text("Enviando información...",
+                      style: Theme.of(context).textTheme.bodyMedium),
+                ],
+              ),
+            if (!_isLoading)
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final isSmallScreen = constraints.maxWidth < 400;
 
-                return Flex(
-                  direction: isSmallScreen ? Axis.vertical : Axis.horizontal,
-                  mainAxisAlignment: isSmallScreen
-                      ? MainAxisAlignment.center
-                      : MainAxisAlignment.end,
-                  children: [
-                    SizedBox(
-                      width: isSmallScreen ? double.infinity : null,
-                      child: ReusableButton(
-                        childText: cancelText,
-                        onPressed: onCancel,
-                        buttonColor: cancelButtonColor,
-                        childTextColor: cancelTextColor,
-                        iconData: cancelIcon,
+                  return Flex(
+                    direction: isSmallScreen ? Axis.vertical : Axis.horizontal,
+                    mainAxisAlignment: isSmallScreen
+                        ? MainAxisAlignment.center
+                        : MainAxisAlignment.end,
+                    children: [
+                      SizedBox(
+                        width: isSmallScreen ? double.infinity : null,
+                        child: ReusableButton(
+                          childText: widget.cancelText,
+                          onPressed: widget.onCancel,
+                          buttonColor: widget.cancelButtonColor,
+                          childTextColor: widget.cancelTextColor,
+                          iconData: widget.cancelIcon,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: isSmallScreen ? 8 : 0,
-                      width: isSmallScreen ? 0 : 8,
-                    ),
-                    SizedBox(
-                      width: isSmallScreen ? double.infinity : null,
-                      child: ReusableButton(
-                        childText: confirmText,
-                        onPressed: onConfirm,
-                        buttonColor: confirmButtonColor,
-                        childTextColor: confirmTextColor,
-                        iconData: confirmIcon,
+                      SizedBox(
+                        height: isSmallScreen ? 8 : 0,
+                        width: isSmallScreen ? 0 : 8,
                       ),
-                    ),
-                  ],
-                );
-              },
-            ),
+                      SizedBox(
+                        width: isSmallScreen ? double.infinity : null,
+                        child: ReusableButton(
+                          childText: widget.confirmText,
+                          onPressed: _handleConfirm,
+                          buttonColor: widget.confirmButtonColor,
+                          childTextColor: widget.confirmTextColor,
+                          iconData: widget.confirmIcon,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
           ],
         ),
       ),

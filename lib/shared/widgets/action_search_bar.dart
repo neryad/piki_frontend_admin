@@ -26,7 +26,7 @@ class ActionSearchBar extends StatelessWidget {
 
         return Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * 0.1,
+            horizontal: MediaQuery.of(context).size.width * 0.03,
             vertical: 16,
           ),
           child: Flex(

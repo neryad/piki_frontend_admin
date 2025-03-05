@@ -16,7 +16,7 @@ class AuthService {
 
   Future<bool> login(BuildContext context, Map<String, dynamic> data) async {
     try {
-      const endpoint = '${apiUrl}auth/login';
+      final endpoint = '${apiUrl}auth/login';
       final response = await _dio.post(
         endpoint,
         data: data,

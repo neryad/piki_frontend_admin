@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:piki_admin/auth/pages/check_auth_screen.dart';
 import 'package:piki_admin/shared/components/not_found_page.dart';
+import 'package:piki_admin/shared/constants/environment.dart';
 import 'package:piki_admin/shared/routes/app_navigator.dart';
 import 'package:piki_admin/shared/routes/app_routes.dart';
 import 'package:piki_admin/shared/routes/get_app_route.dart';
@@ -8,7 +9,7 @@ import 'package:piki_admin/theme/app_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-
+  setEnvironmentConfig();
   runApp(const AppState());
 }
 
